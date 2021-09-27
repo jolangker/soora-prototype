@@ -1,3 +1,15 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer components {
+  .login__form {
+    @apply w-full px-3 py-2 border-b-2 border-azure border-opacity-50 font-semibold focus:border-opacity-100 focus:outline-none;
+  }
+  .login__error {
+    @apply pl-3 italic font-semibold text-xs text-red-500;
+  }
+  .login__button {
+    @apply bg-azure py-3 rounded text-white font-semibold text-lg bg-opacity-80 hover:bg-opacity-100;
+  }
+}
