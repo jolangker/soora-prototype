@@ -1,7 +1,7 @@
 module.exports = {
   purge: {
     content: ["./index.html", "./src/**/*.{js,ts,vue,jsx,tsx}"],
-    safeList: ["hidden", "opacity-50", "cursor-not-allowed"],
+    x,
   },
   darkMode: false, // or 'media' or 'class'
   theme: {
@@ -20,10 +20,7 @@ module.exports = {
     },
   },
   variants: {
-    extend: {
-      borderColor: ["group-focus"],
-      div: ["focus"],
-    },
+    extend: {},
   },
   plugins: [],
 };
