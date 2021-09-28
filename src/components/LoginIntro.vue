@@ -2,7 +2,7 @@
   <div
     class="
       h-screen
-      w-3/5
+      w-2/3
       bg-intro bg-cover bg-no-repeat
       relative
       overflow-hidden
