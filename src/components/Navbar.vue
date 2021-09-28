@@ -3,30 +3,60 @@
     <router-link :to="{ name: 'Home' }" class="font-bebas text-3xl"
       >SOORA</router-link
     >
-    <div class="flex items-center">
-      <div
-        class="
-          w-10
-          h-10
-          border-2 border-white
-          rounded-full
-          relative
-          overflow-hidden
-        "
-      >
-        <img
-          src="../assets/user.png"
-          alt="user picture"
-          class="absolute inset-0"
-        />
+    <div role="button" class="relative" @click="toggleMenu">
+      <div class="flex items-center">
+        <div
+          class="
+            w-10
+            h-10
+            border-2 border-white
+            rounded-full
+            relative
+            overflow-hidden
+          "
+        >
+          <img
+            src="../assets/user.png"
+            alt="user picture"
+            class="absolute inset-0"
+          />
+        </div>
+        <h3 class="ml-2">Paquito Tzy</h3>
       </div>
-      <h3 class="ml-2">Paquito Tzy</h3>
+      <el-collapse-transition>
+        <div
+          v-if="show"
+          class="absolute w-full px-2 bg-white top-11 rounded text-lg shadow"
+        >
+          <el-link icon="el-icon-setting" :underline="false"
+            >Adminsitrator</el-link
+          >
+          <el-link icon="el-icon-back" :underline="false">Logout</el-link>
+        </div>
+      </el-collapse-transition>
     </div>
   </nav>
 </template>
 
 <script>
-export default {};
+import { ElIcon, ElLink, ElCollapseTransition } from "element-plus";
+import { ref } from "vue-demi";
+
+export default {
+  components: { ElIcon, ElLink, ElCollapseTransition },
+  setup() {
+    const show = ref(false);
+
+    const toggleMenu = () => {
+      show.value = !show.value;
+    };
+
+    return {
+      show,
+      toggleMenu,
+    };
+  },
+};
 </script>
 
 <style></style>
