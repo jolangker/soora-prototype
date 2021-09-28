@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-white rounded-xl shadow-card p-5 text-azure relative">
+  <div class="bg-white rounded shadow p-5 text-azure relative">
     <div class="flex items-end">
       <p class="text-5xl font-semibold">
         <slot name="value" />

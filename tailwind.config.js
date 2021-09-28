@@ -10,7 +10,7 @@ module.exports = {
         open: "'Open Sans', sans-serif",
       },
       colors: {
-        azure: "#007CFF",
+        azure: "#409EFF",
         nickel: "#929292",
       },
       backgroundImage: {

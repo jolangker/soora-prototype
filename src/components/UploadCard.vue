@@ -1,22 +1,18 @@
 <template>
-  <div
-    class="
-      rounded-xl
-      bg-azure
-      p-5
-      flex flex-col
-      justify-center
-      text-center text-white
-      font-semibold
-    "
-  >
-    <i class="fas fa-cloud-upload-alt text-6xl self-center"></i>
-    <span class="mt-1">Upload Audio</span>
-  </div>
+  <el-button type="primary" class="text-white font-semibold">
+    <el-icon :size="60">
+      <upload-filled />
+    </el-icon>
+    <p class="text-base">Upload Audio</p>
+  </el-button>
 </template>
 
 <script>
-export default {};
+import { ElIcon, ElButton } from "element-plus";
+import { UploadFilled } from "@element-plus/icons";
+export default {
+  components: { UploadFilled, ElIcon, ElButton },
+};
 </script>
 
 <style></style>
