@@ -70,6 +70,7 @@ export default {
 
           setTimeout(() => {
             this.isLoading = false;
+            this.$router.push({ name: "Home" });
           }, 3000);
         } else {
           return false;

@@ -31,7 +31,9 @@
           <el-link icon="el-icon-setting" :underline="false"
             >Adminsitrator</el-link
           >
-          <el-link icon="el-icon-back" :underline="false">Logout</el-link>
+          <el-link icon="el-icon-back" :underline="false" @click="logout"
+            >Logout</el-link
+          >
         </div>
       </el-collapse-transition>
     </div>
@@ -41,19 +43,26 @@
 <script>
 import { ElIcon, ElLink, ElCollapseTransition } from "element-plus";
 import { ref } from "vue-demi";
+import { useRouter } from "vue-router";
 
 export default {
   components: { ElIcon, ElLink, ElCollapseTransition },
   setup() {
+    const router = useRouter();
     const show = ref(false);
 
     const toggleMenu = () => {
       show.value = !show.value;
     };
 
+    const logout = () => {
+      router.push({ name: "Login" });
+    };
+
     return {
       show,
       toggleMenu,
+      logout,
     };
   },
 };
