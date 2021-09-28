@@ -1,7 +1,15 @@
 <template>
   <div class="flex space-x-8">
     <card>
-      <template v-slot:value>{{ recordList.length }}</template>
+      <template v-slot:value>
+        <vue3-autocounter
+          ref="counter"
+          :startAmount="0"
+          :endAmount="recordList.length"
+          :duration="1"
+          :autoinit="true"
+        />
+      </template>
       <template v-slot:title>Jumlah Rekaman</template>
       <template v-slot:icon>
         <img
@@ -12,7 +20,15 @@
       </template>
     </card>
     <card>
-      <template v-slot:value>{{ totalMember }}</template>
+      <template v-slot:value>
+        <vue3-autocounter
+          ref="counter"
+          :startAmount="0"
+          :endAmount="totalMember"
+          :duration="1"
+          :autoinit="true"
+        />
+      </template>
       <template v-slot:title>Jumlah Anggota</template>
       <template v-slot:icon>
         <img
@@ -24,8 +40,14 @@
     </card>
     <card>
       <template v-slot:value>
-        {{ totalDuration }}
-        <span class="text-lg -ml-1">Jam</span>
+        <vue3-autocounter
+          ref="counter"
+          :startAmount="0"
+          :endAmount="totalDuration"
+          :duration="1"
+          :autoinit="true"
+        />
+        <span class="text-base ml-1">Jam</span>
       </template>
       <template v-slot:title>Total Durasi</template>
       <template v-slot:icon>
@@ -44,9 +66,10 @@
 import { onBeforeUpdate, ref } from "vue-demi";
 import Card from "./Card.vue";
 import UploadCard from "./UploadCard.vue";
+import Vue3Autocounter from "vue3-autocounter";
 
 export default {
-  components: { Card, UploadCard },
+  components: { Card, UploadCard, Vue3Autocounter },
   props: {
     recordList: Array,
   },
