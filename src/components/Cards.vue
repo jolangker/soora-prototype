@@ -1,5 +1,5 @@
 <template>
-  <div class="px-32 flex space-x-8">
+  <div class="flex space-x-8">
     <Card class="flex-grow" v-for="card in cards" :key="card">
       <template v-slot:value>{{ card.value }}</template>
       <template v-slot:info>{{ card.info }}</template>
