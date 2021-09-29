@@ -20,10 +20,7 @@
 </template>
 
 <script>
-import { ElTable, ElTableColumn } from "element-plus";
-
 export default {
-  components: { ElTable, ElTableColumn },
   props: {
     recordList: Array,
   },

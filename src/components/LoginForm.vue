@@ -32,9 +32,7 @@
 </template>
 
 <script>
-import { ElForm, ElFormItem, ElInput, ElButton } from "element-plus";
 export default {
-  components: { ElForm, ElFormItem, ElInput, ElButton },
   data() {
     return {
       ruleForm: {

@@ -42,7 +42,7 @@
 </template>
 
 <script>
-import { computed, ref } from "@vue/reactivity";
+import { ref } from "@vue/reactivity";
 export default {
   setup() {
     const slides = [

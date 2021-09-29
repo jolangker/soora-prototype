@@ -41,12 +41,10 @@
 </template>
 
 <script>
-import { ElIcon, ElLink, ElCollapseTransition } from "element-plus";
 import { ref } from "vue-demi";
 import { useRouter } from "vue-router";
 
 export default {
-  components: { ElIcon, ElLink, ElCollapseTransition },
   setup() {
     const router = useRouter();
     const show = ref(false);
