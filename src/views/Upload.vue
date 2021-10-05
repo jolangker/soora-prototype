@@ -3,9 +3,6 @@
     ref="uploadAudio"
     action="https://jsonplaceholder.typicode.com/posts/"
     drag
-    :auto-upload="false"
-    prop="file"
-    status-icon
   >
     <i class="el-icon-upload"></i>
     <div class="el-upload__text">
@@ -33,8 +30,20 @@
       ></el-date-picker>
     </el-form-item>
     <el-form-item label="Peserta Meeting" prop="participants">
-      <el-input v-model="meetingForm.participants"></el-input>
-      <el-button type="primary" class="ml-2" icon="el-icon-plus"></el-button>
+      <el-select
+        v-model="meetingForm.participants"
+        multiple
+        placeholder="Pilih Peserta"
+        class="w-full"
+      >
+        <el-option
+          v-for="participant in participantsList"
+          :key="participant"
+          :label="participant.name"
+          :value="participant.name"
+        >
+        </el-option>
+      </el-select>
     </el-form-item>
 
     <el-button
@@ -42,19 +51,24 @@
       class="w-full"
       :loading="isLoading"
       @click="submitForm('meetingForm')"
-      >PROSES</el-button
     >
+      PROSES
+    </el-button>
   </el-form>
 </template>
 
 <script>
+import axios from "axios";
+import { ref } from "vue-demi";
+import moment from "moment";
+
 export default {
   data() {
     return {
       meetingForm: {
         title: "",
         date: "",
-        participants: "",
+        participants: [],
       },
 
       rules: {
@@ -88,7 +102,10 @@ export default {
         ],
       },
 
+      participantsList: this.getParticipants(),
       isLoading: false,
+      transcript: this.getTranscript(),
+      meetingDetails: {},
     };
   },
   methods: {
@@ -97,17 +114,48 @@ export default {
         if (valid) {
           this.isLoading = !this.isLoading;
 
-          console.log(this.meetingForm.title);
-          console.log(this.meetingForm.date);
-          console.log(this.meetingForm.participants);
+          this.meetingDetails = {
+            title: this.meetingForm.title,
+            meetingDate: moment(this.meetingForm.date).format("DD-MM-YYYY"),
+            participants: this.meetingForm.participants,
+            transcript: this.transcript,
+            dateCreated: moment(),
+          };
 
-          setTimeout(() => {
-            this.isLoading = false;
-          }, 3000);
+          axios
+            .post("http://localhost:3000/reports", this.meetingDetails)
+            .then((res) => {
+              this.isLoading = false;
+              this.$router.push({
+                name: "Meetings",
+                params: { id: res.data.id },
+              });
+            })
+            .catch((err) => {
+              console.log(err);
+            });
         } else {
           return false;
         }
       });
+    },
+    getTranscript() {
+      const ts = ref([]);
+
+      axios.get("http://localhost:3000/transcript").then((res) => {
+        ts.value = res.data;
+      });
+
+      return ts;
+    },
+    getParticipants() {
+      const par = ref([]);
+
+      axios.get("http://localhost:3000/participants").then((res) => {
+        par.value = res.data;
+      });
+
+      return par;
     },
   },
 };
@@ -121,7 +169,6 @@ export default {
   width: 100%;
   height: auto;
   padding: 30px 0 70px 0;
-  z-index: -99;
 }
 .el-form-item__label {
   text-align: left;

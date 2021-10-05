@@ -16,11 +16,9 @@ export default {
   setup() {
     const recordList = ref([]);
 
-    axios
-      .get("https://my-json-server.typicode.com/jolangker/data/records")
-      .then((res) => {
-        recordList.value = res.data;
-      });
+    axios.get("http://localhost:3000/records").then((res) => {
+      recordList.value = res.data;
+    });
 
     return {
       recordList,

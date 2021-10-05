@@ -1,6 +1,6 @@
 <template>
   <nav class="bg-azure px-32 py-2 text-white flex justify-between items-center">
-    <router-link :to="{ name: 'Home' }" class="font-bebas text-3xl"
+    <router-link :to="{ name: 'Dashboard' }" class="font-bebas text-3xl"
       >SOORA</router-link
     >
     <div role="button" class="relative" @click="toggleMenu">

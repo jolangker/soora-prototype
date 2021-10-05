@@ -17,6 +17,12 @@ const routes = [
         name: "Upload",
         component: () => import("../views/Upload.vue"),
       },
+      {
+        path: "meetings/:id/",
+        name: "Meetings",
+        component: () => import("../views/Meetings.vue"),
+        props: true,
+      },
     ],
   },
   {
