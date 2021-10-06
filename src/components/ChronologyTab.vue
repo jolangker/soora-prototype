@@ -7,10 +7,9 @@
         />
         <div
           class="ml-2 bg-azure py-2 px-4 text-white rounded relative"
-          style="min-width: 200px"
           @mouseenter="handleHover(index)"
         >
-          <div>
+          <div class="mr-8">
             <div class="flex items-center">
               <h2 class="font-semibold">{{ transcript.talker }}</h2>
               <small
@@ -128,7 +127,7 @@ import { Edit, Check, Loading, UserFilled, Close } from "@element-plus/icons";
 import { ref } from "vue-demi";
 import axios from "axios";
 import moment from "moment";
-import { ElNotification } from "element-plus";
+import { ElMessage } from "element-plus";
 
 export default {
   props: {
@@ -173,7 +172,6 @@ export default {
       tsData[index].lastUpdate.time = moment();
       tsData[index].lastUpdate.updatedBy = "Admin";
       isLoading.value = true;
-      console.log(tsData);
 
       axios
         .patch(`http://localhost:3000/reports/${props.id}/`, {
@@ -184,16 +182,14 @@ export default {
           },
         })
         .then((res) => {
-          ElNotification({
-            title: "BERHASIL!",
-            message: "Item ini berhasil disunting",
+          ElMessage({
+            message: "Perubahan berhasil disimpan",
             type: "success",
           });
         })
         .catch((err) => {
-          ElNotification({
-            title: "GAGAL!",
-            message: "Perubahan tidak disimpan",
+          ElMessage({
+            message: "Gagal menyimpan perubahan",
             type: "error",
           });
         })
