@@ -1,8 +1,12 @@
 <template>
   <el-upload
     ref="uploadAudio"
-    action="https://jsonplaceholder.typicode.com/posts/"
+    action="#"
     drag
+    :on-change="fileValidation"
+    :on-exceed="handleExceed"
+    :auto-upload="false"
+    :limit="1"
   >
     <i class="el-icon-upload"></i>
     <div class="el-upload__text">
@@ -106,6 +110,18 @@ export default {
       isLoading: false,
       transcript: this.getTranscript(),
       meetingDetails: {},
+
+      audioTypes: [
+        "audio/mpeg",
+        "video/mpeg",
+        "audio/vnd.wave",
+        "audio/wav",
+        "audio/wave",
+        "audio/x-wav",
+        "audio/mp4",
+        "audio/ogg,",
+        "audio/webm",
+      ],
     };
   },
   methods: {
@@ -156,6 +172,16 @@ export default {
       });
 
       return par;
+    },
+    fileValidation(file, fileList) {
+      console.log(file);
+      if (!this.audioTypes.includes(file.raw.type)) {
+        fileList.splice(0, 1);
+        this.$message.warning("Hanya menerima file jenis audio");
+      }
+    },
+    handleExceed() {
+      this.$message.warning("File tidak boleh lebih dari 1");
     },
   },
 };
