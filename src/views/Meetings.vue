@@ -1,29 +1,14 @@
 <template>
-  <div class="flex flex-col items-center font-semibold text-nickel">
-    <h1 class="text-4xl">{{ meetingDetails.title }}1</h1>
-    <div class="flex items-center space-x-3 mt-2 text-sm">
-      <div class="flex items-center">
-        <el-icon>
-          <calendar />
-        </el-icon>
-        <span class="ml-1">{{ meetingDetails.meetingDate }}</span>
-      </div>
-      <div>
-        <el-icon>
-          <user-filled />
-        </el-icon>
-        <span class="ml-1">{{ meetingDetails.participants?.length }}</span>
-      </div>
-    </div>
-  </div>
-  <el-tabs type="border-card" class="mt-8">
+  <meeting-info :meetingDetails="meetingDetails" />
+
+  <el-tabs type="border-card" class="mt-8 z-0">
     <el-tab-pane label="Kronologi">
       <div class="flex flex-col px-8 py-6 space-y-4">
         <div
           v-for="(transcript, index) in meetingDetails.transcript"
           :key="index"
         >
-          <div class="flex">
+          <div class="flex items-start">
             <img
               :src="`https://ui-avatars.com/api/?name=${transcript.talker}&background=random&rounded=true&size=40`"
             />
@@ -57,10 +42,19 @@
                   <loading />
                 </el-icon>
                 <div
-                  class="flex items-center space-x-1"
+                  class="flex items-stretch space-x-1"
                   v-else-if="editModeIndex === index"
                 >
-                  <div class="relative z-50">
+                  <el-icon
+                    :size="18"
+                    role="button"
+                    title="Batalkan Perubahan"
+                    class="transform hover:scale-125"
+                    @click="cancelChanges"
+                  >
+                    <close />
+                  </el-icon>
+                  <div class="relative">
                     <el-collapse-transition>
                       <div
                         class="
@@ -71,6 +65,7 @@
                           py-2
                           px-6
                           rounded
+                          z-50
                         "
                         v-if="listVisibility"
                       >
@@ -90,7 +85,7 @@
                       role="button"
                       title="Pilih Peserta"
                       class="transform hover:scale-125"
-                      @click="toggleList"
+                      @click="toggleList()"
                     >
                       <user />
                     </el-icon>
@@ -115,24 +110,19 @@
                   >
                     <edit />
                   </el-icon>
-                  <el-icon
-                    :size="18"
-                    role="button"
-                    title="Hapus Item Ini"
-                    class="transform hover:scale-125"
-                  >
-                    <remove />
-                  </el-icon>
                 </div>
               </div>
             </div>
           </div>
           <small
             class="text-nickel font-semibold ml-12"
-            v-if="infoIndex === index"
+            v-if="transcript.lastUpdate.time"
           >
             Disunting Oleh
-            <span class="italic">{{ transcript.lastUpdate.updatedBy }}</span> -
+            <span class="italic font-bold">{{
+              transcript.lastUpdate.updatedBy
+            }}</span>
+            -
             {{
               moment(transcript.lastUpdate.time).format(
                 "dddd, MMMM Do YYYY, h:mm:ss"
@@ -143,44 +133,35 @@
       </div>
     </el-tab-pane>
     <el-tab-pane label="Paragraf">
-      <!-- <span v-for="chat in chats" :key="chat">{{ chat.message }}</span> -->
+      <paragraph-tab :meetingDetails="meetingDetails" />
     </el-tab-pane>
     <el-tab-pane label="Peserta">
-      <!-- <el-radio-group v-model="selectedUser">
-        <el-scrollbar>
-          <div class="flex h-14">
-            <el-radio-button
-              v-for="participant in meetingDetails.participants"
-              :key="participant"
-              :label="participant"
-              class="flex-grow"
-            />
-          </div>
-        </el-scrollbar>
-      </el-radio-group>
-      <div>
-        <p>{{ filteredChat[0]?.message }}</p>
-      </div> -->
+      <selected-user-tab :meetingDetails="meetingDetails" />
     </el-tab-pane>
   </el-tabs>
 </template>
 
 <script>
-import {
-  Calendar,
-  Edit,
-  Remove,
-  Check,
-  User,
-  Loading,
-  UserFilled,
-} from "@element-plus/icons";
-import { computed, ref } from "vue-demi";
+import { Edit, Check, Loading, UserFilled, Close } from "@element-plus/icons";
+import { ref } from "vue-demi";
 import axios from "axios";
 import moment from "moment";
+import { ElNotification } from "element-plus";
+import MeetingInfo from "../components/MeetingInfo.vue";
+import ParagraphTab from "../components/ParagraphTab.vue";
+import SelectedUserTab from "../components/SelectedUserTab.vue";
 
 export default {
-  components: { Calendar, Edit, Remove, Check, User, Loading, UserFilled },
+  components: {
+    Edit,
+    Check,
+    Loading,
+    UserFilled,
+    Close,
+    MeetingInfo,
+    ParagraphTab,
+    SelectedUserTab,
+  },
   props: ["id"],
   setup(props) {
     const meetingDetails = ref({});
@@ -190,14 +171,13 @@ export default {
     const isLoading = ref(false);
     const participantsList = ref(null);
     const listVisibility = ref(false);
-    const chooseParticipant = ref("");
+    const chooseParticipant = ref("Unregistered");
     const infoIndex = ref(null);
 
     axios
       .get("http://localhost:3000/reports/" + props.id)
       .then((res) => {
         meetingDetails.value = res.data;
-        console.log(meetingDetails.value);
       })
       .catch((err) => {
         console.log(err);
@@ -210,40 +190,55 @@ export default {
     const editMode = (item, index) => {
       editModeIndex.value = index;
       editMessage.value = item.message;
+      listVisibility.value = false;
+      chooseParticipant.value = item.talker;
     };
 
-    const transcriptData = computed(() => {
-      return meetingDetails.value.transcript;
-    });
-
     const submitEdit = (index) => {
-      transcriptData.value[index].message = editMessage.value;
-      transcriptData.value[index].talker = chooseParticipant.value;
-      transcriptData.value[index].lastUpdate.time = moment();
-      transcriptData.value[index].lastUpdate.updatedBy = "Admin";
+      const tsData = meetingDetails.value.transcript;
+      tsData[index].talker = chooseParticipant.value;
+      tsData[index].message = editMessage.value;
+      tsData[index].lastUpdate.time = moment();
+      tsData[index].lastUpdate.updatedBy = "Admin";
       isLoading.value = true;
 
       axios
         .patch(`http://localhost:3000/reports/${props.id}/`, {
-          transcript: transcriptData.value,
+          transcript: tsData,
           lastUpdate: {
             time: moment(),
             updatedBy: "Admin",
           },
         })
         .then((res) => {
-          console.log(res);
-          setTimeout(() => {
-            isLoading.value = false;
-            editModeIndex.value = null;
-            infoIndex.value = index;
-          }, 2000);
+          ElNotification({
+            title: "BERHASIL!",
+            message: "Item ini berhasil disunting",
+            type: "success",
+          });
+        })
+        .catch((err) => {
+          ElNotification({
+            title: "GAGAL!",
+            message: "Perubahan tidak disimpan",
+            type: "error",
+          });
+        })
+        .then(() => {
+          isLoading.value = false;
+          editModeIndex.value = null;
+          infoIndex.value = index;
         });
     };
 
     const toggleList = () => {
       listVisibility.value = !listVisibility.value;
     };
+
+    const cancelChanges = () => {
+      editModeIndex.value = null;
+    };
+
     return {
       meetingDetails,
       hoveringIndex,
@@ -259,6 +254,7 @@ export default {
       chooseParticipant,
       moment,
       infoIndex,
+      cancelChanges,
     };
   },
 };
@@ -270,7 +266,6 @@ export default {
   width: 100%;
   text-align: center;
 }
-
 .el-tabs__item {
   flex-grow: 1;
   font-weight: 700;
@@ -278,7 +273,9 @@ export default {
 .el-radio-button__inner {
   width: 100%;
 }
-
+.el-tabs__content {
+  overflow: visible;
+}
 textarea {
   resize: none;
   width: 905px;
