@@ -1,9 +1,7 @@
 <template>
-  <div>
-    <p class="px-8 py-2">
-      {{ paragraph?.join(" ") }}
-    </p>
-  </div>
+  <p>
+    {{ paragraph?.join(" ") }}
+  </p>
 </template>
 
 <script>
