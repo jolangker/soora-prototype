@@ -5,7 +5,7 @@
         <vue3-autocounter
           ref="counter"
           :startAmount="0"
-          :endAmount="recordList.length"
+          :endAmount="reports.length"
           :duration="1"
           :autoinit="true"
         />
@@ -24,7 +24,7 @@
         <vue3-autocounter
           ref="counter"
           :startAmount="0"
-          :endAmount="totalMember"
+          :endAmount="totalParticipants"
           :duration="1"
           :autoinit="true"
         />
@@ -43,7 +43,7 @@
         <vue3-autocounter
           ref="counter"
           :startAmount="0"
-          :endAmount="totalDuration"
+          :endAmount="totalDurations / 60"
           :duration="1"
           :autoinit="true"
         />
@@ -63,7 +63,6 @@
 </template>
 
 <script>
-import { onBeforeUpdate, ref } from "vue-demi";
 import Card from "./Card.vue";
 import UploadCard from "./UploadCard.vue";
 import Vue3Autocounter from "vue3-autocounter";
@@ -71,28 +70,9 @@ import Vue3Autocounter from "vue3-autocounter";
 export default {
   components: { Card, UploadCard, Vue3Autocounter },
   props: {
-    recordList: Array,
-  },
-  setup(props) {
-    const totalDuration = ref(0);
-    const totalMember = ref(0);
-
-    onBeforeUpdate(() => {
-      const duration = props.recordList
-        .map((data) => data.duration)
-        .reduce((prev, curr) => prev + curr);
-
-      totalDuration.value = Math.floor(duration / 60);
-
-      totalMember.value = props.recordList
-        .map((data) => data.participants)
-        .reduce((prev, curr) => (prev > curr ? prev : curr));
-    });
-
-    return {
-      totalDuration,
-      totalMember,
-    };
+    reports: Array,
+    totalParticipants: Number,
+    totalDurations: Number,
   },
 };
 </script>

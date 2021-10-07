@@ -134,13 +134,16 @@ export default {
             title: this.meetingForm.title,
             meetingDate: moment(this.meetingForm.date).format("DD-MM-YYYY"),
             participants: this.meetingForm.participants,
+            totalParticipants: this.meetingForm.participants.length,
             transcript: this.transcript,
             dateCreated: moment(),
+            audioDuration: Math.round(Math.random() * 100),
           };
 
           axios
             .post("http://localhost:3000/reports", this.meetingDetails)
             .then((res) => {
+              console.log(res.data);
               this.isLoading = false;
               this.$router.push({
                 name: "Meetings",
