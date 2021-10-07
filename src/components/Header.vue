@@ -1,8 +1,8 @@
 <template>
   <nav class="bg-azure px-32 py-2 text-white flex justify-between items-center">
-    <router-link :to="{ name: 'Dashboard' }" class="font-bebas text-3xl"
-      >SOORA</router-link
-    >
+    <router-link :to="{ name: 'Dashboard' }" class="font-bebas text-3xl">
+      SOORA
+    </router-link>
     <div role="button" class="relative" @click="toggleMenu">
       <div class="flex items-center">
         <div
@@ -28,12 +28,12 @@
           v-if="show"
           class="absolute w-full px-2 bg-white top-11 rounded text-lg shadow"
         >
-          <el-link icon="el-icon-setting" :underline="false"
-            >Adminsitrator</el-link
-          >
-          <el-link icon="el-icon-back" :underline="false" @click="logout"
-            >Logout</el-link
-          >
+          <el-link icon="el-icon-setting" :underline="false" @click="toAdmin">
+            Adminsitrator
+          </el-link>
+          <el-link icon="el-icon-back" :underline="false" @click="logout">
+            Logout
+          </el-link>
         </div>
       </el-collapse-transition>
     </div>
@@ -57,10 +57,15 @@ export default {
       router.push({ name: "Login" });
     };
 
+    const toAdmin = () => {
+      router.push({ name: "Admin" });
+    };
+
     return {
       show,
       toggleMenu,
       logout,
+      toAdmin,
     };
   },
 };

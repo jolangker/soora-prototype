@@ -8,7 +8,7 @@
         <div class="mt-5 flex flex-col space-y-4">
           <el-skeleton-item variant="p" class="w-80" />
           <el-skeleton-item variant="p" class="w-80" />
-          <el-skeleton-item variant="p" class="w-1/2" />
+          <el-skeleton-item variant="p" />
         </div>
       </template>
     </el-skeleton>
@@ -98,7 +98,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .el-tabs__nav {
   display: flex;
   width: 100%;

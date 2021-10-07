@@ -43,8 +43,8 @@
         <el-option
           v-for="participant in participantsList"
           :key="participant"
-          :label="participant.name"
-          :value="participant.name"
+          :label="participant.full_name"
+          :value="participant.full_name"
         >
         </el-option>
       </el-select>
@@ -171,7 +171,10 @@ export default {
       const par = ref([]);
 
       axios.get("http://localhost:3000/participants").then((res) => {
-        par.value = res.data;
+        par.value = res.data.map((data) => {
+          data.full_name = `${data.first_name} ${data.last_name}`;
+          return data;
+        });
       });
 
       return par;

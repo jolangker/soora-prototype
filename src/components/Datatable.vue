@@ -5,7 +5,6 @@
       class="w-full"
       :default-sort="{ prop: 'meetingDate', order: 'descending' }"
       @row-click="handleClick"
-      row-class-name="custom-row"
       header-cell-class-name="custom-header"
     >
       <el-table-column
@@ -38,47 +37,24 @@ export default {
       router.push({ name: "Meetings", params: { id: row.id } });
     };
 
-    const tableHeaderClassName = ({ row, rowIndex }) => {
-      return "custom-header";
-    };
-
-    const tableRowClassName = ({ row, rowIndex }) => {
-      return "custom-row";
-    };
-
     return {
       handleClick,
-      tableRowClassName,
-      tableHeaderClassName,
     };
   },
 };
 </script>
 
 <style>
-.el-table {
-  border-bottom: 1px solid var(--el-color-primary);
-}
-
-.el-table .sort-caret.ascending {
-  border-bottom-color: white;
-}
-
-.el-table .sort-caret.descending {
-  border-top-color: white;
-}
-
 .custom-header {
-  background-color: var(--el-color-primary) !important;
+  --el-table-header-background-color: var(--el-color-primary);
   color: white !important;
 }
 
-.custom-row {
-  --el-table-border: 1px solid var(--el-color-primary);
-  cursor: pointer;
+.el-table .descending .sort-caret.descending {
+  border-top-color: white !important;
 }
 
-.custom-row:hover {
-  --el-table-row-hover-background-color: rgb(224, 224, 224);
+.el-table .ascending .sort-caret.ascending {
+  border-bottom-color: white !important;
 }
 </style>
