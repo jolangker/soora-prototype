@@ -5,6 +5,8 @@
       class="w-full"
       :default-sort="{ prop: 'meetingDate', order: 'descending' }"
       @row-click="handleClick"
+      row-class-name="custom-row"
+      header-cell-class-name="custom-header"
     >
       <el-table-column
         prop="title"
@@ -36,43 +38,47 @@ export default {
       router.push({ name: "Meetings", params: { id: row.id } });
     };
 
+    const tableHeaderClassName = ({ row, rowIndex }) => {
+      return "custom-header";
+    };
+
+    const tableRowClassName = ({ row, rowIndex }) => {
+      return "custom-row";
+    };
+
     return {
       handleClick,
+      tableRowClassName,
+      tableHeaderClassName,
     };
   },
 };
 </script>
 
-<style lang="scss">
+<style>
 .el-table {
-  th.el-table__cell.is-leaf {
-    background-color: #f3f4f6;
-    border-bottom: #909399 1.5px solid;
-    text-align: center;
-  }
+  border-bottom: 1px solid var(--el-color-primary);
+}
 
-  th.el-table__cell.is-leaf:first-child {
-    text-align: left;
-  }
+.el-table .sort-caret.ascending {
+  border-bottom-color: white;
+}
 
-  tbody {
-    .el-table__cell {
-      background: #f3f4f6;
-      border: none;
-      padding: 6px 0;
-      text-align: center;
-      cursor: pointer;
-    }
+.el-table .sort-caret.descending {
+  border-top-color: white;
+}
 
-    .el-table__cell:first-child {
-      text-align: left;
-    }
+.custom-header {
+  background-color: var(--el-color-primary) !important;
+  color: white !important;
+}
 
-    .cell {
-      background: white;
-      padding: 12px;
-      border-bottom: #409eff 1px solid;
-    }
-  }
+.custom-row {
+  --el-table-border: 1px solid var(--el-color-primary);
+  cursor: pointer;
+}
+
+.custom-row:hover {
+  --el-table-row-hover-background-color: rgb(224, 224, 224);
 }
 </style>
