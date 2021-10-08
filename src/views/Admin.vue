@@ -29,9 +29,22 @@
               placeholder="Cari dengan nama"
             />
           </template>
-          <template #default>
-            <el-button size="mini">Edit</el-button>
-            <el-button size="mini" type="danger">Delete</el-button>
+          <template #default="scope">
+            <el-button size="mini" @click="toggleEditModal(scope.row.id)"
+              >Edit</el-button
+            >
+            <el-popconfirm
+              confirm-button-text="YA"
+              cancel-button-text="BATAL"
+              icon="el-icon-info"
+              icon-color="red"
+              @confirm="deleteParticipant(scope.row.id)"
+              title="Apakah anda yakin ingin menghapus peserta ini?"
+            >
+              <template #reference>
+                <el-button size="mini" type="danger">Hapus</el-button>
+              </template>
+            </el-popconfirm>
           </template>
         </el-table-column>
       </el-table>
@@ -41,20 +54,31 @@
     :modalVisiblity="addModalVisible"
     @updateVisible="closeModal"
   />
+
+  <edit-participant-modal
+    :modalVisiblity="editModalVisible"
+    @updateEditVisible="closeEditModal"
+  />
 </template>
 
 <script>
 import { computed, ref } from "vue-demi";
 import Header from "../components/Header.vue";
 import AddParticipantModal from "../components/AddParticipantModal.vue";
+import EditParticipantModal from "../components/EditParticipantModal.vue";
 import axios from "axios";
+import { ElMessage } from "element-plus";
+import { useRouter } from "vue-router";
 
 export default {
-  components: { Header, AddParticipantModal },
+  components: { Header, AddParticipantModal, EditParticipantModal },
   setup() {
     const participants = ref([]);
     const search = ref("");
     const addModalVisible = ref(false);
+    const editModalVisible = ref(false);
+    const participant = ref({});
+    const router = useRouter();
 
     axios.get("http://localhost:3000/participants").then((res) => {
       participants.value = res.data.map((data) => {
@@ -79,7 +103,25 @@ export default {
     };
 
     const closeModal = (val) => {
-      addModalVisible.value = false;
+      addModalVisible.value = val;
+    };
+
+    const toggleEditModal = (id) => {
+      editModalVisible.value = true;
+    };
+
+    const closeEditModal = (val) => {
+      editModalVisible.value = val;
+    };
+
+    const deleteParticipant = (id) => {
+      axios.delete(`http://localhost:3000/participants/${id}/`).then((res) => {
+        ElMessage({
+          type: "success",
+          message: "Peserta Berhasil Dihapus",
+        });
+        router.go();
+      });
     };
 
     return {
@@ -89,6 +131,11 @@ export default {
       addModalVisible,
       toggleAddModal,
       closeModal,
+      editModalVisible,
+      toggleEditModal,
+      closeEditModal,
+      participant,
+      deleteParticipant,
     };
   },
 };

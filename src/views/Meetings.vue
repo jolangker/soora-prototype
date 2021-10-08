@@ -98,7 +98,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style>
 .el-tabs__nav {
   display: flex;
   width: 100%;
