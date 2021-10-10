@@ -61,7 +61,7 @@
     @confirm="deleteReport"
   >
     <template #reference>
-      <el-button type="danger" size="medium">Hapus Laporan</el-button>
+      <el-button type="danger" size="mini">Hapus Laporan</el-button>
     </template>
   </el-popconfirm>
 </template>
@@ -106,7 +106,7 @@ export default {
 
     const deleteReport = () => {
       axios
-        .delete(`http://localhost:3000/reposrts/${meetingDetails.value.id}`)
+        .delete(`http://localhost:3000/reports/${meetingDetails.value.id}`)
         .then((res) => {
           ElMessage({
             message: `${meetingDetails.value.title} berhasil dihapus`,

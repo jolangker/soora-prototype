@@ -11,15 +11,25 @@
       </div>
     </el-scrollbar>
   </el-radio-group>
-  <div>
-    <p v-for="msg in filteredMessage" :key="msg">
+  <div v-if="filteredMessage.length">
+    <p
+      v-for="msg in filteredMessage"
+      :key="msg"
+      class="px-1 py-2 border-b border-azure border-opacity-30"
+    >
       {{ msg.message }}
     </p>
+    <small class="font-semibold text-nickel">
+      TOTAL PERCAKAPAN : {{ filteredMessage.length }}
+    </small>
+  </div>
+  <div v-else class="text-center italic">
+    <p>Tidak ada percakapan</p>
   </div>
 </template>
 
 <script>
-import { computed, onBeforeUpdate, ref } from "vue-demi";
+import { computed, ref } from "vue-demi";
 export default {
   props: {
     meetingDetails: Object,

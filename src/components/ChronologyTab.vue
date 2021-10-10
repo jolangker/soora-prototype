@@ -14,26 +14,25 @@
               <h2 class="font-semibold">{{ transcript.talker }}</h2>
               <small
                 v-show="editModeIndex === index"
-                class="ml-3 font-bold text-yellow-300"
-                >EDITING
+                class="ml-3 mr-12 font-bold text-yellow-200"
+              >
+                EDITING
               </small>
             </div>
             <textarea
-              v-if="editModeIndex === index"
+              v-show="editModeIndex === index"
               v-model="editMessage"
-              class="text-sm bg-transparent focus:outline-none"
-              autofocus
+              class="textarea text-sm bg-transparent focus:outline-none"
             />
-            <p v-else class="text-sm">{{ transcript.message }}</p>
+            <p v-show="editModeIndex !== index" class="message text-sm">
+              {{ transcript.message }}
+            </p>
           </div>
           <div class="absolute top-3 right-4" v-if="hoveringIndex === index">
             <el-icon v-if="isLoading" class="is-loading" :size="18">
               <loading />
             </el-icon>
-            <div
-              class="flex items-stretch space-x-1"
-              v-else-if="editModeIndex === index"
-            >
+            <div class="flex space-x-1" v-else-if="editModeIndex === index">
               <el-icon
                 :size="18"
                 role="button"
@@ -89,7 +88,7 @@
                 <check />
               </el-icon>
             </div>
-            <div v-else class="flex items-center space-x-1">
+            <div v-else>
               <el-icon
                 :size="18"
                 role="button"
@@ -154,6 +153,11 @@ export default {
       editMessage.value = item.message;
       listVisibility.value = false;
       chooseParticipant.value = item.talker;
+
+      const message = document.querySelectorAll(".message");
+      const textarea = document.querySelectorAll(".textarea");
+      textarea[index].style.width = message[index].offsetWidth + 0.1 + "px";
+      textarea[index].style.height = message[index].offsetHeight + "px";
     };
 
     const toggleList = () => {
@@ -220,4 +224,8 @@ export default {
 };
 </script>
 
-<style></style>
+<style>
+.textarea {
+  overflow-y: hidden;
+}
+</style>
