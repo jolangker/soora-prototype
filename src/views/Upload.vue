@@ -23,7 +23,10 @@
     label-width="150px"
   >
     <el-form-item label="Judul Meeting" prop="title">
-      <el-input v-model="meetingForm.title"></el-input>
+      <el-input
+        v-model="meetingForm.title"
+        placeholder="Masukan Judul Meeting"
+      ></el-input>
     </el-form-item>
     <el-form-item label="Tanggal Meeting" prop="date">
       <el-date-picker

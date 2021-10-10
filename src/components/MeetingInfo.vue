@@ -1,6 +1,6 @@
 <template>
-  <div class="font-semibold text-nickel">
-    <div class="text-center text-4xl">
+  <div class="text-nickel">
+    <div class="text-center text-4xl font-bold">
       <h1 v-if="!isEditing3" @click="changeMode3">
         {{ meetingDetails.title }}
       </h1>
@@ -14,17 +14,13 @@
         </el-icon>
       </div>
     </div>
-    <div class="flex justify-start space-x-3 mt-5 text-sm">
-      <div class="flex flex-col space-y-3 w-64">
-        <h2>Tanggal Laporan Dibuat</h2>
-        <h2>Tanggal Meeting</h2>
-        <h2>Peserta</h2>
-      </div>
-      <div class="flex flex-col space-y-3">
-        <div class="flex items-center">
-          <span class="mr-1">:</span>
+    <div class="flex flex-col space-y-2 mt-3 text-sm font-semibold">
+      <el-row class="items-center">
+        <el-col :span="6">Tanggal Laporan Dibuat</el-col>
+        <el-col :span="1">:</el-col>
+        <el-col :span="17">
           <p v-if="!isEditing1" @click="changeMode1">
-            {{ moment(meetingDetails.dateCreated).format("DD-MM-YYYY") }}
+            {{ moment(meetingDetails?.dateCreated)?.format("DD-MM-YYYY") }}
           </p>
           <div v-else class="flex items-center">
             <el-date-picker v-model="dateCreated" type="date" size="mini" />
@@ -40,11 +36,14 @@
               <circle-check-filled />
             </el-icon>
           </div>
-        </div>
-        <div class="flex items-center">
-          <span class="mr-1">:</span>
+        </el-col>
+      </el-row>
+      <el-row class="items-center">
+        <el-col :span="6">Tanggal Meeting</el-col>
+        <el-col :span="1">:</el-col>
+        <el-col :span="17">
           <p v-if="!isEditing2" @click="changeMode2">
-            {{ meetingDetails.meetingDate }}
+            {{ moment(meetingDetails?.meetingDate)?.format("DD-MM-YYYY") }}
           </p>
           <div v-else class="flex items-center">
             <el-date-picker v-model="meetingDate" type="date" size="mini" />
@@ -60,9 +59,12 @@
               <circle-check-filled />
             </el-icon>
           </div>
-        </div>
-        <div class="flex">
-          <span class="mr-1">:</span>
+        </el-col>
+      </el-row>
+      <el-row class="items-center">
+        <el-col :span="6">Peserta Meeting</el-col>
+        <el-col :span="1">:</el-col>
+        <el-col :span="17">
           <p v-if="!isEditing4" @click="changeMode4">
             {{ meetingDetails.participants?.join(", ") }} ({{
               meetingDetails.participants?.length
@@ -73,9 +75,9 @@
               v-model="participants"
               multiple
               placeholder="Select"
-              collapse-tags
               filterable
               size="mini"
+              class="w-full"
             >
               <el-option
                 v-for="participant in participantsList"
@@ -97,8 +99,8 @@
               <circle-check-filled />
             </el-icon>
           </div>
-        </div>
-      </div>
+        </el-col>
+      </el-row>
     </div>
   </div>
 </template>

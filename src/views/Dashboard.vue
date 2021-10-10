@@ -23,10 +23,12 @@ export default {
 
     axios.get("http://localhost:3000/reports").then((res) => {
       reports.value = res.data;
-      totalDurations.value = res.data
-        .map((data) => data.audioDuration)
-        .reduce((prev, curr) => prev + curr);
-      console.log(reports.value);
+
+      if (reports.value.length) {
+        totalDurations.value = res.data
+          .map((data) => data.audioDuration)
+          .reduce((prev, curr) => prev + curr);
+      }
     });
 
     axios.get("http://localhost:3000/participants").then((res) => {

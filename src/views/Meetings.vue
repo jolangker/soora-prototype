@@ -50,6 +50,20 @@
       <selected-user-tab v-else :meetingDetails="meetingDetails" />
     </el-tab-pane>
   </el-tabs>
+
+  <el-popconfirm
+    confirm-button-text="IYA"
+    cancel-button-text="BATALKAN"
+    icon="el-icon-info"
+    icon-color="red"
+    title="Apakah anda yakin ingin menghapus ini?"
+    class="mt-5"
+    @confirm="deleteReport"
+  >
+    <template #reference>
+      <el-button type="danger" size="medium">Hapus Laporan</el-button>
+    </template>
+  </el-popconfirm>
 </template>
 
 <script>
@@ -59,7 +73,8 @@ import MeetingInfo from "../components/MeetingInfo.vue";
 import ChronologyTab from "../components/ChronologyTab.vue";
 import ParagraphTab from "../components/ParagraphTab.vue";
 import SelectedUserTab from "../components/SelectedUserTab.vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
+import { ElMessage } from "element-plus";
 
 export default {
   components: {
@@ -74,6 +89,7 @@ export default {
     const loading = ref(true);
     const route = useRoute();
     const count = ref(0);
+    const router = useRouter();
 
     axios
       .get("http://localhost:3000/reports/" + props.id)
@@ -88,11 +104,30 @@ export default {
         console.log(err);
       });
 
+    const deleteReport = () => {
+      axios
+        .delete(`http://localhost:3000/reposrts/${meetingDetails.value.id}`)
+        .then((res) => {
+          ElMessage({
+            message: `${meetingDetails.value.title} berhasil dihapus`,
+            type: "success",
+          });
+          router.push({ name: "Dashboard" });
+        })
+        .catch((err) => {
+          ElMessage({
+            message: `Gagal menghapus ${meetingDetails.value.title}`,
+            type: "error",
+          });
+        });
+    };
+
     return {
       meetingDetails,
       loading,
       route,
       count,
+      deleteReport,
     };
   },
 };
