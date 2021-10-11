@@ -30,9 +30,9 @@
             />
           </template>
           <template #default="scope">
-            <el-button size="mini" @click="toggleEditModal(scope.row.id)"
-              >Edit</el-button
-            >
+            <el-button size="mini" @click="toggleEditModal(scope.row.id)">
+              Edit
+            </el-button>
             <el-popconfirm
               confirm-button-text="YA"
               cancel-button-text="BATAL"
@@ -55,10 +55,13 @@
     @updateVisible="closeModal"
   />
 
-  <edit-participant-modal
-    :modalVisiblity="editModalVisible"
-    @updateEditVisible="closeEditModal"
-  />
+  <div v-if="participantId !== null">
+    <edit-participant-modal
+      :modalVisiblity="editModalVisible"
+      :participantId="participantId"
+      @updateEditVisible="closeEditModal"
+    />
+  </div>
 </template>
 
 <script>
@@ -78,6 +81,7 @@ export default {
     const addModalVisible = ref(false);
     const editModalVisible = ref(false);
     const participant = ref({});
+    const participantId = ref(null);
     const router = useRouter();
 
     axios.get("http://localhost:3000/participants").then((res) => {
@@ -108,6 +112,7 @@ export default {
 
     const toggleEditModal = (id) => {
       editModalVisible.value = true;
+      participantId.value = id;
     };
 
     const closeEditModal = (val) => {
@@ -136,6 +141,7 @@ export default {
       closeEditModal,
       participant,
       deleteParticipant,
+      participantId,
     };
   },
 };

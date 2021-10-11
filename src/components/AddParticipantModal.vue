@@ -38,6 +38,7 @@
 import { reactive, ref, toRefs } from "vue-demi";
 import axios from "axios";
 import { ElMessage } from "element-plus";
+import { useRouter } from "vue-router";
 export default {
   props: {
     modalVisiblity: Boolean,
@@ -81,6 +82,7 @@ export default {
       ],
     };
     const isLoading = ref(false);
+    const router = useRouter();
 
     const onClose = () => {
       emit("updateVisible", false);
@@ -103,6 +105,7 @@ export default {
                   type: "success",
                   message: "Peserta Berhasil Ditambahkan!",
                 });
+                router.go();
               })
               .catch((err) => {
                 ElMessage({

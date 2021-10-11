@@ -35,12 +35,13 @@
 </template>
 
 <script>
-import { onMounted, onUpdated, reactive, ref, toRefs, watch } from "vue-demi";
+import { reactive, ref, toRefs, watch, watchEffect } from "vue-demi";
 import axios from "axios";
 import { ElMessage } from "element-plus";
 export default {
   props: {
     modalVisiblity: Boolean,
+    participantId: Number,
   },
   emits: ["updateEditVisible"],
   setup(props, { emit }) {
@@ -81,6 +82,7 @@ export default {
       ],
     };
     const isLoading = ref(false);
+    const participant = ref({});
 
     const onClose = () => {
       emit("updateEditVisible", false);
@@ -88,6 +90,18 @@ export default {
 
     const { first_name, last_name, email, company, job_title } =
       toRefs(editFormModel);
+
+    watchEffect(() => {
+      axios
+        .get("http://localhost:3000/participants/" + props.participantId)
+        .then((res) => {
+          first_name.value = res.data.first_name;
+          last_name.value = res.data.last_name;
+          email.value = res.data.email;
+          company.value = res.data.company;
+          job_title.value = res.data.job_title;
+        });
+    });
 
     const editParticipant = () => {
       editForm.value.validate((valid) => {
