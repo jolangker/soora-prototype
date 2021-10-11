@@ -4,79 +4,129 @@
   >
     <h2 class="font-bebas text-azure text-6xl mb-3">SOORA</h2>
     <el-form
-      ref="ruleForm"
-      :model="ruleForm"
+      ref="loginForm"
+      :model="loginFormModel"
       :rules="rules"
       status-icon
       class="w-full"
     >
       <el-form-item prop="username">
-        <el-input v-model="ruleForm.username" placeholder="Username" />
+        <el-input v-model="username" placeholder="Username" />
       </el-form-item>
       <el-form-item prop="password">
-        <el-input
-          v-model="ruleForm.password"
-          show-password
-          placeholder="Password"
-        />
+        <el-input v-model="password" show-password placeholder="Password" />
       </el-form-item>
       <el-button
         type="primary"
-        @click="login('ruleForm')"
+        @click="login"
         :loading="isLoading"
         class="w-full"
-        >LOGIN</el-button
       >
+        LOGIN
+      </el-button>
     </el-form>
   </div>
 </template>
 
 <script>
-import { ref } from "vue-demi";
+import { reactive, ref, toRefs } from "vue-demi";
+import { useRouter } from "vue-router";
 export default {
-  data() {
-    return {
-      ruleForm: {
-        username: "",
-        password: "",
-      },
+  setup() {
+    const loginFormModel = reactive({
+      username: "",
+      password: "",
+    });
 
-      rules: {
-        username: [
-          {
-            required: true,
-            message: "Username tidak boleh kosong!",
-            trigger: "blur",
-          },
-        ],
-        password: [
-          {
-            required: true,
-            message: "Password tidak boleh kosong!",
-            trigger: "blur",
-          },
-        ],
-      },
-
-      isLoading: false,
+    const rules = {
+      username: [
+        {
+          required: true,
+          message: "Username tidak boleh kosong!",
+          trigger: "blur",
+        },
+      ],
+      password: [
+        {
+          required: true,
+          message: "Password tidak boleh kosong!",
+          trigger: "blur",
+        },
+      ],
     };
-  },
-  methods: {
-    login(form) {
-      this.$refs[form].validate((valid) => {
-        if (valid) {
-          this.isLoading = true;
 
+    const { username, password } = toRefs(loginFormModel);
+    const loginForm = ref(null);
+    const isLoading = ref(false);
+    const router = useRouter();
+
+    const login = () => {
+      loginForm.value.validate((valid) => {
+        if (valid) {
+          isLoading.value = true;
           setTimeout(() => {
-            this.isLoading = false;
-            this.$router.push({ name: "Home" });
+            isLoading.value = false;
+            router.push({ name: "Home" });
           }, 3000);
         } else {
           return false;
         }
       });
-    },
+    };
+
+    return {
+      loginFormModel,
+      loginForm,
+      username,
+      password,
+      rules,
+      login,
+      isLoading,
+    };
   },
+  // data() {
+  //   return {
+  //     ruleForm: {
+  //       username: "",
+  //       password: "",
+  //     },
+
+  //     rules: {
+  //       username: [
+  //         {
+  //           required: true,
+  //           message: "Username tidak boleh kosong!",
+  //           trigger: "blur",
+  //         },
+  //       ],
+  //       password: [
+  //         {
+  //           required: true,
+  //           message: "Password tidak boleh kosong!",
+  //           trigger: "blur",
+  //         },
+  //       ],
+  //     },
+
+  //     isLoading: false,
+  //   };
+  // },
+  // methods: {
+  //   login(form) {
+  //     this.$refs[form].validate((valid) => {
+  //       if (valid) {
+  //         this.isLoading = true;
+
+  //         setTimeout(() => {
+  //           this.isLoading = false;
+  //           this.$router.push({ name: "Home" });
+  //         }, 3000);
+  //       } else {
+  //         return false;
+  //       }
+  //     });
+  //   },
+  // },
 };
 </script>
 

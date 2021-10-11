@@ -18,19 +18,16 @@
 
   <el-form
     ref="meetingForm"
-    :model="meetingForm"
+    :model="meetingFormModel"
     :rules="rules"
     label-width="150px"
   >
     <el-form-item label="Judul Meeting" prop="title">
-      <el-input
-        v-model="meetingForm.title"
-        placeholder="Masukan Judul Meeting"
-      ></el-input>
+      <el-input v-model="title" placeholder="Masukan Judul Meeting"></el-input>
     </el-form-item>
     <el-form-item label="Tanggal Meeting" prop="date">
       <el-date-picker
-        v-model="meetingForm.date"
+        v-model="date"
         type="date"
         class="w-full"
         placeholder="Pilih Tanggal"
@@ -38,7 +35,7 @@
     </el-form-item>
     <el-form-item label="Peserta Meeting" prop="participants">
       <el-select
-        v-model="meetingForm.participants"
+        v-model="participants"
         multiple
         placeholder="Pilih Peserta"
         class="w-full"
@@ -66,132 +63,137 @@
 
 <script>
 import axios from "axios";
-import { ref } from "vue-demi";
+import { reactive, ref, toRefs } from "vue-demi";
 import moment from "moment";
+import { useRouter } from "vue-router";
+import { ElMessage } from "element-plus";
 
 export default {
-  data() {
-    return {
-      meetingForm: {
-        title: "",
-        date: "",
-        participants: [],
-      },
+  setup() {
+    const meetingForm = ref(null);
+    const meetingFormModel = reactive({
+      title: "",
+      date: "",
+      participants: [],
+    });
 
-      rules: {
-        title: [
-          {
-            required: true,
-            message: "Judul Meeting tidak boleh kosong",
-            trigger: "blur",
-          },
-        ],
-        date: [
-          {
-            required: true,
-            message: "Tanggal Meeting tidak boleh kosong",
-            trigger: "blur",
-          },
-        ],
-        participants: [
-          {
-            required: true,
-            message: "Peserta Meeting tidak boleh kosong",
-            trigger: "blur",
-          },
-        ],
-        file: [
-          {
-            required: true,
-            message: "Harap upload file terlebih dahulu",
-            trigger: "blur",
-          },
-        ],
-      },
-
-      participantsList: this.getParticipants(),
-      isLoading: false,
-      transcript: this.getTranscript(),
-      meetingDetails: {},
-
-      audioTypes: [
-        "audio/mpeg",
-        "video/mpeg",
-        "audio/vnd.wave",
-        "audio/wav",
-        "audio/wave",
-        "audio/x-wav",
-        "audio/mp4",
-        "audio/ogg,",
-        "audio/webm",
+    const rules = {
+      title: [
+        {
+          required: true,
+          message: "Judul Meeting tidak boleh kosong",
+          trigger: "blur",
+        },
+      ],
+      date: [
+        {
+          required: true,
+          message: "Tanggal Meeting tidak boleh kosong",
+          trigger: "blur",
+        },
+      ],
+      participants: [
+        {
+          required: true,
+          message: "Peserta Meeting tidak boleh kosong",
+          trigger: "blur",
+        },
       ],
     };
-  },
-  methods: {
-    submitForm(form) {
-      this.$refs[form].validate((valid) => {
-        if (valid) {
-          this.isLoading = !this.isLoading;
 
-          this.meetingDetails = {
-            title: this.meetingForm.title,
-            meetingDate: moment(this.meetingForm.date).format("DD-MM-YYYY"),
-            participants: this.meetingForm.participants,
-            totalParticipants: this.meetingForm.participants.length,
-            transcript: this.transcript,
-            dateCreated: moment(),
-            audioDuration: Math.round(Math.random() * 100),
-          };
+    const audioTypes = [
+      "audio/mpeg",
+      "video/mpeg",
+      "audio/vnd.wave",
+      "audio/wav",
+      "audio/wave",
+      "audio/x-wav",
+      "audio/mp4",
+      "audio/ogg,",
+      "audio/webm",
+    ];
+
+    const { title, date, participants } = toRefs(meetingFormModel);
+    const participantsList = reactive([]);
+    const transcript = reactive([]);
+    const meetingDetails = reactive({});
+    const isLoading = ref(false);
+    const router = useRouter();
+
+    axios.get("http://localhost:3000/participants").then((res) => {
+      participantsList.push(...res.data);
+      participantsList.map((data) => {
+        data.full_name = `${data.first_name} ${data.last_name}`;
+        return data;
+      });
+    });
+
+    axios.get("http://localhost:3000/transcript").then((res) => {
+      transcript.push(...res.data);
+    });
+
+    const submitForm = () => {
+      meetingForm.value.validate((valid) => {
+        if (valid) {
+          isLoading.value = true;
+
+          meetingDetails.title = title.value;
+          meetingDetails.meetingDate = moment(date.value).format("DD-MM-YYYY");
+          meetingDetails.participants = participants.value;
+          meetingDetails.totalParticipants = participants.value.length;
+          meetingDetails.transcript = transcript;
+          meetingDetails.dateCreated = moment();
+          meetingDetails.audioDuration = Math.round(Math.random() * 100);
 
           axios
-            .post("http://localhost:3000/reports", this.meetingDetails)
+            .post("http://localhost:3000/reports", meetingDetails)
             .then((res) => {
               console.log(res.data);
-              this.isLoading = false;
-              this.$router.push({
-                name: "Meetings",
-                params: { id: res.data.id },
-              });
+              router.push({ name: "Meetings", params: { id: res.data.id } });
             })
             .catch((err) => {
               console.log(err);
+            })
+            .then(() => {
+              isLoading.value = false;
             });
         } else {
           return false;
         }
       });
-    },
-    getTranscript() {
-      const ts = ref([]);
+    };
 
-      axios.get("http://localhost:3000/transcript").then((res) => {
-        ts.value = res.data;
-      });
-
-      return ts;
-    },
-    getParticipants() {
-      const par = ref([]);
-
-      axios.get("http://localhost:3000/participants").then((res) => {
-        par.value = res.data.map((data) => {
-          data.full_name = `${data.first_name} ${data.last_name}`;
-          return data;
-        });
-      });
-
-      return par;
-    },
-    fileValidation(file, fileList) {
-      console.log(file);
-      if (!this.audioTypes.includes(file.raw.type)) {
+    const fileValidation = (file, fileList) => {
+      if (!audioTypes.includes(file.raw.type)) {
         fileList.splice(0, 1);
-        this.$message.warning("Hanya menerima file jenis audio");
+        ElMessage({
+          message: "File tidak valid. Harap masukkan file audio.",
+          type: "warning",
+        });
       }
-    },
-    handleExceed() {
-      this.$message.warning("File tidak boleh lebih dari 1");
-    },
+    };
+
+    const handleExceed = () => {
+      ElMessage({
+        message: "File tidak boleh lebih dari 1",
+        type: "warning",
+      });
+    };
+
+    return {
+      meetingForm,
+      meetingFormModel,
+      rules,
+      audioTypes,
+      title,
+      date,
+      participants,
+      participantsList,
+      isLoading,
+      submitForm,
+      fileValidation,
+      handleExceed,
+    };
   },
 };
 </script>
