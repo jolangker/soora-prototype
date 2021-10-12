@@ -33,7 +33,25 @@ const routes = [
   {
     path: "/admin",
     name: "Admin",
-    component: () => import("../views/Admin.vue"),
+    component: () => import("../views/admin/Admin.vue"),
+    redirect: "/admin/participants",
+    children: [
+      {
+        path: "participants",
+        name: "MParticipants",
+        component: () => import("../views/admin/MParticipants.vue"),
+      },
+      {
+        path: "companies",
+        name: "MCompanies",
+        component: () => import("../views/admin/MCompanies.vue"),
+      },
+      {
+        path: "job-title",
+        name: "MJobTitle",
+        component: () => import("../views/admin/MJobTitle.vue"),
+      },
+    ],
   },
 ];
 
