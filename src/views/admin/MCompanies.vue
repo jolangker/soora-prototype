@@ -29,13 +29,18 @@
           <el-button type="primary" size="mini" plain @click="editMode(scope)">
             Sunting
           </el-button>
-          <el-button
-            type="danger"
-            size="mini"
-            @click="deleteData(scope.row.id)"
-            plain
-            >Hapus</el-button
+          <el-popconfirm
+            confirm-button-text="IYA"
+            cancel-button-text="BATAL"
+            icon="el-icon-info"
+            icon-color="red"
+            title="Apakah anda yakin ingin menghapus perusahaan ini?"
+            @confirm="deleteData(scope.row.id)"
           >
+            <template #reference>
+              <el-button type="danger" plain size="mini">Hapus</el-button>
+            </template>
+          </el-popconfirm>
         </div>
         <div v-else>
           <el-button size="mini" plain @click="editIndex = null">

@@ -1,14 +1,6 @@
 {
   "participants": [
     {
-      "id": 8,
-      "first_name": "Heddie",
-      "last_name": "Rattenberie",
-      "email": "hrattenberie7@wikipedia.org",
-      "company": "Flipbug",
-      "job_title": "Developer III"
-    },
-    {
       "id": 9,
       "first_name": "Cordelia",
       "last_name": "Heinreich",
@@ -137,27 +129,23 @@
       "id": 28
     },
     {
-      "first_name": "kucin",
-      "last_name": "kita",
-      "email": "kitakitakucin@gmail.com",
-      "company": "kuciang",
-      "job_title": "kucing jagoan saya",
-      "id": 29
+      "first_name": "Dadang",
+      "last_name": "Jujung",
+      "email": "dajung@gmail.com",
+      "company": "Corkery, Haag and Herman",
+      "job_title": "Komisaris",
+      "id": 31
     },
     {
-      "first_name": "kenapa",
-      "last_name": "lah iya",
-      "email": "lahaha@gmail.com",
-      "company": "hahaya",
-      "job_title": "yaha",
-      "id": 30
+      "first_name": "Heddie",
+      "last_name": "Rattenberie",
+      "email": "hrattenberie7@wikipedia.org",
+      "company": "Kulas-Schinner",
+      "job_title": "Fronted Developer",
+      "id": 35
     }
   ],
   "companies": [
-    {
-      "id": 1,
-      "company_name": "Skiles-Boehman"
-    },
     {
       "id": 3,
       "company_name": "Kulas-Schinner"
@@ -215,10 +203,6 @@
       "company_name": "Metz and Sons"
     },
     {
-      "id": 17,
-      "company_name": "Kessler-Gottlieb"
-    },
-    {
       "id": 18,
       "company_name": "Lockman LLC"
     },
@@ -271,76 +255,8 @@
       "company_name": "Nienow, Donnelly and Schaefer"
     },
     {
-      "company_name": {
-        "_object": {
-          "companyName": "asdw"
-        },
-        "_key": "companyName",
-        "__v_isRef": true
-      },
+      "company_name": "Media Jalangpeno",
       "id": 31
-    },
-    {
-      "company_name": {
-        "_object": {
-          "companyName": "StarBucks"
-        },
-        "_key": "companyName",
-        "__v_isRef": true
-      },
-      "id": 32
-    },
-    {
-      "company_name": {
-        "_object": {
-          "companyName": "star"
-        },
-        "_key": "companyName",
-        "__v_isRef": true
-      },
-      "id": 33
-    },
-    {
-      "_object": {
-        "companyName": "jamey"
-      },
-      "_key": "companyName",
-      "__v_isRef": true,
-      "id": 34
-    },
-    {
-      "_object": {
-        "companyName": "asdw"
-      },
-      "_key": "companyName",
-      "__v_isRef": true,
-      "id": 35
-    },
-    {
-      "companyName": {
-        "_object": {
-          "companyName": "salah"
-        },
-        "_key": "companyName",
-        "__v_isRef": true
-      },
-      "id": 36
-    },
-    {
-      "company_name": "star",
-      "id": 37
-    },
-    {
-      "company_name": "asdwsd",
-      "id": 38
-    },
-    {
-      "company_name": "asdw",
-      "id": 39
-    },
-    {
-      "company_name": "Hokkk",
-      "id": 40
     }
   ],
   "titles": [
@@ -355,10 +271,6 @@
     {
       "id": 3,
       "title_name": "Backend Developer"
-    },
-    {
-      "title_name": "Komisaris",
-      "id": 11
     }
   ],
   "reports": [

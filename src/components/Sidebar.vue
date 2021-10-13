@@ -5,7 +5,7 @@
       <p>Paqutio Tzy</p>
     </div>
   </div>
-  <el-menu default-active="1-1" class="el-menu-vertical" :router="true">
+  <el-menu class="el-menu-vertical" :router="true">
     <el-sub-menu index="1">
       <template #title>
         <i class="el-icon-document"></i>
