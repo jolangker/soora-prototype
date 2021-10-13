@@ -22,14 +22,14 @@
       </el-menu-item>
     </el-sub-menu>
   </el-menu>
-  <el-button-group class="mt-auto w-full flex">
+  <div class="mt-auto w-full flex">
     <router-link :to="{ name: 'Login' }" class="flex-grow">
       <el-button type="primary" class="w-full">Logout</el-button>
     </router-link>
     <router-link :to="{ name: 'Dashboard' }" class="flex-grow">
       <el-button type="primary" class="w-full">Dashboard</el-button>
     </router-link>
-  </el-button-group>
+  </div>
 </template>
 
 <script>

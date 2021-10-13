@@ -1,8 +1,9 @@
 <template>
   <el-container>
-    <el-aside class="min-h-screen flex flex-col">
+    <el-aside class="z-50 h-screen flex flex-col fixed">
       <Sidebar />
     </el-aside>
+    <el-aside class="z-0" />
     <el-main>
       <router-view />
     </el-main>
