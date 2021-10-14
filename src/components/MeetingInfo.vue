@@ -115,6 +115,7 @@ import {
 import { reactive, ref, toRefs } from "vue-demi";
 import axios from "axios";
 import { ElMessage } from "element-plus";
+import getVariables from "../composeables/getVariables";
 
 export default {
   props: {
@@ -122,12 +123,13 @@ export default {
   },
   components: { Edit, CircleCloseFilled, CircleCheckFilled },
   setup(props) {
+    const { urlParticipants, urlReports } = getVariables();
     const { id, title, dateCreated, meetingDate, participants } = toRefs(
       props.meetingDetails
     );
     const participantsList = reactive([]);
 
-    axios.get("http://localhost:3000/participants/").then((res) => {
+    axios.get(urlParticipants).then((res) => {
       participantsList.push(...res.data);
       participantsList.map((data) => {
         data.full_name = `${data.first_name} ${data.last_name}`;
@@ -151,8 +153,8 @@ export default {
         });
       } else {
         axios
-          .patch(`http://localhost:3000/reports/${id.value}/`, {
-            dateCreated: dateCreated.value,
+          .patch(`${urlReports}${id.value}/`, {
+            dateCreated: moment(dateCreated.value),
           })
           .then((res) => {
             ElMessage({
@@ -185,10 +187,10 @@ export default {
           message: "Input tidak boleh kosong",
         });
       } else {
-        meetingDate.value = moment(meetingDate.value).format("DD-MM-YYYY");
+        meetingDate.value = moment(meetingDate.value);
 
         axios
-          .patch(`http://localhost:3000/reports/${id.value}/`, {
+          .patch(`${urlReports}${id.value}/`, {
             meetingDate: meetingDate.value,
           })
           .then((res) => {
@@ -223,7 +225,7 @@ export default {
         });
       } else {
         axios
-          .patch(`http://localhost:3000/reports/${id.value}/`, {
+          .patch(`${urlReports}${id.value}/`, {
             title: title.value,
           })
           .then((res) => {
@@ -258,7 +260,7 @@ export default {
         });
       } else {
         axios
-          .patch(`http://localhost:3000/reports/${id.value}/`, {
+          .patch(`${urlReports}${id.value}/`, {
             participants: participants.value,
             totalParticipants: participants.value.length,
           })

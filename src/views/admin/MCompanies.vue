@@ -88,8 +88,11 @@
 import { computed, reactive, ref, toRefs } from "vue-demi";
 import axios from "axios";
 import { ElMessage } from "element-plus";
+import getVariables from "../../composeables/getVariables";
+
 export default {
   setup() {
+    const { urlCompanies } = getVariables();
     const company = ref({});
     const companies = reactive([]);
     const search = ref("");
@@ -97,7 +100,7 @@ export default {
     const isLoading = ref(false);
     const editIndex = ref(null);
 
-    axios.get("http://localhost:3000/companies/").then((res) => {
+    axios.get(urlCompanies).then((res) => {
       companies.push(...res.data);
     });
 
@@ -129,7 +132,7 @@ export default {
         if (valid) {
           isLoading.value = true;
           axios
-            .post("http://localhost:3000/companies/", {
+            .post(urlCompanies, {
               company_name: companyName.value,
             })
             .then((res) => {
@@ -161,18 +164,16 @@ export default {
       editIndex.value = scope.$index;
       saveChangeVisible.value = true;
 
-      axios
-        .get(`http://localhost:3000/companies/${scope.row.id}/`)
-        .then((res) => {
-          company.value = res.data;
-          editCompanyName.value = company.value.company_name;
-        });
+      axios.get(`${urlCompanies}${scope.row.id}/`).then((res) => {
+        company.value = res.data;
+        editCompanyName.value = company.value.company_name;
+      });
     };
 
     const saveChange = (id) => {
       isLoading.value = true;
       axios
-        .patch(`http://localhost:3000/companies/${id}/`, {
+        .patch(`${urlCompanies}${id}/`, {
           company_name: editCompanyName.value,
         })
         .then((res) => {
@@ -197,7 +198,7 @@ export default {
       isLoading.value = true;
 
       axios
-        .delete(`http://localhost:3000/companies/${id}/`)
+        .delete(`${urlCompanies}${id}/`)
         .then((res) => {
           ElMessage({
             message: "Item berhasil dihapus",

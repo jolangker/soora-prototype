@@ -127,6 +127,7 @@ import { ref } from "vue-demi";
 import axios from "axios";
 import moment from "moment";
 import { ElMessage } from "element-plus";
+import getVariables from "../composeables/getVariables";
 
 export default {
   props: {
@@ -135,6 +136,7 @@ export default {
   },
   components: { Edit, Check, Loading, UserFilled, Close },
   setup(props) {
+    const { urlReports } = getVariables();
     const hoveringIndex = ref(null);
     const editModeIndex = ref(null);
     const editMessage = ref("");
@@ -178,7 +180,7 @@ export default {
       isLoading.value = true;
 
       axios
-        .patch(`http://localhost:3000/reports/${props.id}/`, {
+        .patch(`${urlReports}${props.id}/`, {
           transcript: tsData,
           lastUpdate: {
             time: moment(),

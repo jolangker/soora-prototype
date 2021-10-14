@@ -67,9 +67,11 @@ import { reactive, ref, toRefs } from "vue-demi";
 import moment from "moment";
 import { useRouter } from "vue-router";
 import { ElMessage } from "element-plus";
+import getVariables from "../composeables/getVariables";
 
 export default {
   setup() {
+    const { urlParticipants, urlReports, urlTransript } = getVariables();
     const meetingForm = ref(null);
     const meetingFormModel = reactive({
       title: "",
@@ -120,7 +122,7 @@ export default {
     const isLoading = ref(false);
     const router = useRouter();
 
-    axios.get("http://localhost:3000/participants").then((res) => {
+    axios.get(urlParticipants).then((res) => {
       participantsList.push(...res.data);
       participantsList.map((data) => {
         data.full_name = `${data.first_name} ${data.last_name}`;
@@ -128,7 +130,7 @@ export default {
       });
     });
 
-    axios.get("http://localhost:3000/transcript").then((res) => {
+    axios.get(urlTransript).then((res) => {
       transcript.push(...res.data);
     });
 
@@ -138,7 +140,7 @@ export default {
           isLoading.value = true;
 
           meetingDetails.title = title.value;
-          meetingDetails.meetingDate = moment(date.value).format("DD-MM-YYYY");
+          meetingDetails.meetingDate = moment(date.value);
           meetingDetails.participants = participants.value;
           meetingDetails.totalParticipants = participants.value.length;
           meetingDetails.transcript = transcript;
@@ -146,9 +148,8 @@ export default {
           meetingDetails.audioDuration = Math.round(Math.random() * 100);
 
           axios
-            .post("http://localhost:3000/reports", meetingDetails)
+            .post(urlReports, meetingDetails)
             .then((res) => {
-              console.log(res.data);
               router.push({ name: "Meetings", params: { id: res.data.id } });
             })
             .catch((err) => {

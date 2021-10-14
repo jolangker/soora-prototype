@@ -176,13 +176,16 @@
 import { computed, reactive, ref, toRefs } from "vue-demi";
 import axios from "axios";
 import { ElMessage } from "element-plus";
+import getVariables from "../../composeables/getVariables";
+
 export default {
   setup() {
+    const { urlParticipants, urlCompanies, urlTitles } = getVariables();
     const participants = reactive([]);
     const isLoading = ref(false);
 
     axios
-      .get("http://localhost:3000/participants/")
+      .get(urlParticipants)
       .then((res) => {
         participants.push(...res.data);
         participants.map((data) => {
@@ -251,7 +254,7 @@ export default {
 
     const companies = reactive([]);
     axios
-      .get("http://localhost:3000/companies/")
+      .get(urlCompanies)
       .then((res) => {
         companies.push(...res.data);
       })
@@ -264,7 +267,7 @@ export default {
 
     const jobTitles = reactive([]);
     axios
-      .get("http://localhost:3000/titles/")
+      .get(urlTitles)
       .then((res) => {
         jobTitles.push(...res.data);
       })
@@ -281,7 +284,7 @@ export default {
           isLoading.value = true;
 
           axios
-            .post("http://localhost:3000/participants/", {
+            .post(urlParticipants, {
               first_name: firstName.value,
               last_name: lastName.value,
               email: email.value,
@@ -316,7 +319,7 @@ export default {
       participantId.value = id;
       editDialogVisible.value = !editDialogVisible.value;
       axios
-        .get(`http://localhost:3000/participants/${id}/`)
+        .get(`${urlParticipants}${id}/`)
         .then((res) => {
           firstName.value = res.data.first_name;
           lastName.value = res.data.last_name;
@@ -338,16 +341,13 @@ export default {
           isLoading.value = true;
 
           axios
-            .patch(
-              `http://localhost:3000/participants/${participantId.value}/`,
-              {
-                first_name: firstName.value,
-                last_name: lastName.value,
-                email: email.value,
-                company: company.value,
-                job_title: jobTitle.value,
-              }
-            )
+            .patch(`${urlParticipants}${participantId.value}/`, {
+              first_name: firstName.value,
+              last_name: lastName.value,
+              email: email.value,
+              company: company.value,
+              job_title: jobTitle.value,
+            })
             .then((res) => {
               ElMessage({
                 message: "Perubahan berhasil disimpan",
@@ -378,7 +378,7 @@ export default {
       isLoading.value = true;
 
       axios
-        .delete(`http://localhost:3000/participants/${id}/`)
+        .delete(`${urlParticipants}${id}/`)
         .then((res) => {
           ElMessage({
             message: "Peserta berhasil dihapus",

@@ -84,49 +84,6 @@ export default {
       isLoading,
     };
   },
-  // data() {
-  //   return {
-  //     ruleForm: {
-  //       username: "",
-  //       password: "",
-  //     },
-
-  //     rules: {
-  //       username: [
-  //         {
-  //           required: true,
-  //           message: "Username tidak boleh kosong!",
-  //           trigger: "blur",
-  //         },
-  //       ],
-  //       password: [
-  //         {
-  //           required: true,
-  //           message: "Password tidak boleh kosong!",
-  //           trigger: "blur",
-  //         },
-  //       ],
-  //     },
-
-  //     isLoading: false,
-  //   };
-  // },
-  // methods: {
-  //   login(form) {
-  //     this.$refs[form].validate((valid) => {
-  //       if (valid) {
-  //         this.isLoading = true;
-
-  //         setTimeout(() => {
-  //           this.isLoading = false;
-  //           this.$router.push({ name: "Home" });
-  //         }, 3000);
-  //       } else {
-  //         return false;
-  //       }
-  //     });
-  //   },
-  // },
 };
 </script>
 

@@ -88,8 +88,11 @@
 import { computed, reactive, ref, toRefs } from "vue-demi";
 import axios from "axios";
 import { ElMessage } from "element-plus";
+import getVariables from "../../composeables/getVariables";
+
 export default {
   setup() {
+    const { urlTitles } = getVariables();
     const title = ref({});
     const titles = reactive([]);
     const search = ref("");
@@ -97,7 +100,7 @@ export default {
     const isLoading = ref(false);
     const editIndex = ref(null);
 
-    axios.get("http://localhost:3000/titles/").then((res) => {
+    axios.get(urlTitles).then((res) => {
       titles.push(...res.data);
     });
 
@@ -129,7 +132,7 @@ export default {
         if (valid) {
           isLoading.value = true;
           axios
-            .post("http://localhost:3000/titles/", {
+            .post(urlTitles, {
               title_name: titleName.value,
             })
             .then((res) => {
@@ -161,7 +164,7 @@ export default {
       editIndex.value = scope.$index;
       saveChangeVisible.value = true;
 
-      axios.get(`http://localhost:3000/titles/${scope.row.id}/`).then((res) => {
+      axios.get(`${urlTitles}${scope.row.id}/`).then((res) => {
         title.value = res.data;
         editTitleName.value = title.value.title_name;
       });
@@ -170,7 +173,7 @@ export default {
     const saveChange = (id) => {
       isLoading.value = true;
       axios
-        .patch(`http://localhost:3000/titles/${id}/`, {
+        .patch(`${urlTitles}${id}/`, {
           title_name: editTitleName.value,
         })
         .then((res) => {
@@ -195,7 +198,7 @@ export default {
       isLoading.value = true;
 
       axios
-        .delete(`http://localhost:3000/titles/${id}/`)
+        .delete(`${urlTitles}${id}/`)
         .then((res) => {
           ElMessage({
             message: "Item berhasil dihapus",

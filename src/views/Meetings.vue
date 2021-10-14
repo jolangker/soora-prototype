@@ -75,6 +75,7 @@ import ParagraphTab from "../components/ParagraphTab.vue";
 import SelectedUserTab from "../components/SelectedUserTab.vue";
 import { useRoute, useRouter } from "vue-router";
 import { ElMessage } from "element-plus";
+import getVariables from "../composeables/getVariables";
 
 export default {
   components: {
@@ -85,6 +86,7 @@ export default {
   },
   props: ["id"],
   setup(props) {
+    const { urlReports } = getVariables();
     const meetingDetails = ref({});
     const loading = ref(true);
     const route = useRoute();
@@ -92,7 +94,7 @@ export default {
     const router = useRouter();
 
     axios
-      .get("http://localhost:3000/reports/" + props.id)
+      .get(urlReports + props.id)
       .then((res) => {
         meetingDetails.value = res.data;
         count.value = res.data.transcript.length;
@@ -106,7 +108,7 @@ export default {
 
     const deleteReport = () => {
       axios
-        .delete(`http://localhost:3000/reports/${meetingDetails.value.id}`)
+        .delete(`${urlReports}${meetingDetails.value.id}`)
         .then((res) => {
           ElMessage({
             message: `${meetingDetails.value.title} berhasil dihapus`,

@@ -12,26 +12,33 @@
 import Cards from "../components/Cards.vue";
 import Datatable from "../components/Datatable.vue";
 import axios from "axios";
-import { ref } from "vue-demi";
+import { reactive, ref } from "vue-demi";
+import moment from "moment";
+import getVariables from "../composeables/getVariables";
 
 export default {
   components: { Cards, Datatable },
   setup() {
-    const reports = ref([]);
+    const { urlReports, urlParticipants } = getVariables();
+    const reports = reactive([]);
     const totalParticipants = ref(0);
     const totalDurations = ref(0);
 
-    axios.get("http://localhost:3000/reports").then((res) => {
-      reports.value = res.data;
+    axios.get(urlReports).then((res) => {
+      reports.push(...res.data);
+      reports.map((data) => {
+        data.meetingDate = moment(data.meetingDate).format("DD-MM-YYYY");
+        return data;
+      });
 
-      if (reports.value.length) {
+      if (reports.length) {
         totalDurations.value = res.data
           .map((data) => data.audioDuration)
           .reduce((prev, curr) => prev + curr);
       }
     });
 
-    axios.get("http://localhost:3000/participants").then((res) => {
+    axios.get(urlParticipants).then((res) => {
       totalParticipants.value = res.data.length;
     });
 
