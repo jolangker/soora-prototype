@@ -1,8 +1,9 @@
 import { createApp } from "vue";
 import App from "./App.vue";
 import router from "./route";
-import ElementPlus from "element-plus";
+// import "./styles/element/index.scss";
 import "./styles/main.scss";
+import ElementPlus from "element-plus";
 
 const app = createApp(App);
 

@@ -10,10 +10,9 @@
   "dependencies": {
     "@element-plus/icons": "0.0.11",
     "axios": "^0.21.4",
-    "element-plus": "^1.1.0-beta.17",
+    "element-plus": "^1.1.0-beta.20",
     "json-server": "^0.17.0",
     "moment": "^2.29.1",
-    "sass-loader": "^12.1.0",
     "vue": "^3.2.6",
     "vue3-autocounter": "^1.0.6"
   },
