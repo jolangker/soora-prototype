@@ -11,6 +11,9 @@ import LoginIntro from "../components/LoginIntro.vue";
 
 export default {
   components: { LoginForm, LoginIntro },
+  setup() {
+    sessionStorage.clear();
+  },
 };
 </script>
 
