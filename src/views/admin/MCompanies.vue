@@ -9,7 +9,7 @@
     <el-table-column type="index" align="center">
       <template #header> No </template>
     </el-table-column>
-    <el-table-column label="Nama Perusahaan" prop="company_name" sortable>
+    <el-table-column label="Nama Perusahaan" prop="company" sortable>
       <template #default="scope">
         <el-input
           v-if="scope.$index === editIndex"
@@ -17,16 +17,26 @@
           size="mini"
           class="inline__edit"
         />
-        <div v-else>{{ scope.row.company_name }}</div>
+        <div v-else>{{ scope.row.company }}</div>
       </template>
     </el-table-column>
     <el-table-column align="right" width="300px">
       <template #header>
-        <el-input v-model="search" size="mini" prefix-icon="el-icon-search" />
+        <el-input
+          v-model="search"
+          size="mini"
+          prefix-icon="el-icon-search"
+          placeholder="Cari Perusahaan"
+        />
       </template>
       <template #default="scope">
         <div v-if="scope.$index !== editIndex">
-          <el-button type="primary" size="mini" plain @click="editMode(scope)">
+          <el-button
+            type="primary"
+            size="mini"
+            plain
+            @click="editMode(scope.row.id, scope)"
+          >
             Sunting
           </el-button>
           <el-popconfirm
@@ -92,21 +102,20 @@ import getVariables from "../../composeables/getVariables";
 
 export default {
   setup() {
-    const { urlCompanies } = getVariables();
-    const company = ref({});
+    const { urlCompanies, headers } = getVariables();
     const companies = reactive([]);
     const search = ref("");
     const dialogVisible = ref(false);
     const isLoading = ref(false);
     const editIndex = ref(null);
 
-    axios.get(urlCompanies).then((res) => {
+    axios.get(urlCompanies, headers).then((res) => {
       companies.push(...res.data);
     });
 
     const filteredCompanies = computed(() => {
       return companies.filter((data) => {
-        return data.company_name
+        return data.company
           ?.toLowerCase()
           ?.includes(search.value.toLowerCase());
       });
@@ -130,11 +139,11 @@ export default {
     const addCompany = () => {
       compForm.value.validate((valid) => {
         if (valid) {
+          const data = { company: companyName.value };
           isLoading.value = true;
+
           axios
-            .post(urlCompanies, {
-              company_name: companyName.value,
-            })
+            .post(urlCompanies, data, headers)
             .then((res) => {
               ElMessage({
                 message: "Perusahaan berhasil ditambah",
@@ -160,22 +169,21 @@ export default {
     const editCompanyName = ref("");
     const saveChangeVisible = ref(false);
 
-    const editMode = (scope) => {
+    const editMode = (id, scope) => {
       editIndex.value = scope.$index;
       saveChangeVisible.value = true;
 
-      axios.get(`${urlCompanies}${scope.row.id}/`).then((res) => {
-        company.value = res.data;
-        editCompanyName.value = company.value.company_name;
+      axios.get(`${urlCompanies}${id}/`, headers).then((res) => {
+        editCompanyName.value = res.data.company;
       });
     };
 
     const saveChange = (id) => {
+      const data = { company: editCompanyName.value };
       isLoading.value = true;
+
       axios
-        .patch(`${urlCompanies}${id}/`, {
-          company_name: editCompanyName.value,
-        })
+        .patch(`${urlCompanies}${id}/`, data, headers)
         .then((res) => {
           ElMessage({
             message: "Perubahan berhasil disimpan",
@@ -198,7 +206,7 @@ export default {
       isLoading.value = true;
 
       axios
-        .delete(`${urlCompanies}${id}/`)
+        .delete(`${urlCompanies}${id}/`, headers)
         .then((res) => {
           ElMessage({
             message: "Item berhasil dihapus",
@@ -237,17 +245,4 @@ export default {
 };
 </script>
 
-<style lang="scss">
-.el-table {
-  --el-table-header-font-color: white;
-  --el-table-header-background-color: var(--el-color-primary);
-}
-
-.el-dialog {
-  --el-dialog-padding-primary: 15px;
-}
-
-.el-input.inline__edit {
-  --el-input-background-color: transparent;
-}
-</style>
+<style lang="scss"></style>

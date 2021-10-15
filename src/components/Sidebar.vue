@@ -47,15 +47,15 @@ export default {
   --el-menu-active-color: rgba(250, 250, 250, 1);
   --el-menu-text-color: rgba(250, 250, 250, 0.7);
   --el-menu-background-color: var(--el-color-primary);
-  --el-menu-hover-background-color: #005eb6;
+  --el-menu-hover-background-color: #0000a3;
   --el-menu-border-color: none;
 
-  :hover {
+  &:hover {
     color: white;
   }
 
   .el-menu--inline {
-    --el-menu-background-color: #007dda;
+    --el-menu-background-color: #000085;
   }
 }
 </style>

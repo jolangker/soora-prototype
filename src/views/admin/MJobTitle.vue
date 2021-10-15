@@ -9,7 +9,7 @@
     <el-table-column type="index" align="center">
       <template #header> No </template>
     </el-table-column>
-    <el-table-column label="Jabatan" prop="title_name" sortable>
+    <el-table-column label="Jabatan" prop="title" sortable>
       <template #default="scope">
         <el-input
           v-if="scope.$index === editIndex"
@@ -17,16 +17,26 @@
           size="mini"
           class="inline__edit"
         />
-        <div v-else>{{ scope.row.title_name }}</div>
+        <div v-else>{{ scope.row.title }}</div>
       </template>
     </el-table-column>
     <el-table-column align="right" width="300px">
       <template #header>
-        <el-input v-model="search" size="mini" prefix-icon="el-icon-search" />
+        <el-input
+          v-model="search"
+          size="mini"
+          prefix-icon="el-icon-search"
+          placeholder="Cari Jabatan"
+        />
       </template>
       <template #default="scope">
         <div v-if="scope.$index !== editIndex">
-          <el-button type="primary" size="mini" plain @click="editMode(scope)">
+          <el-button
+            type="primary"
+            size="mini"
+            plain
+            @click="editMode(scope.row.id, scope)"
+          >
             Sunting
           </el-button>
           <el-popconfirm
@@ -92,7 +102,7 @@ import getVariables from "../../composeables/getVariables";
 
 export default {
   setup() {
-    const { urlTitles } = getVariables();
+    const { urlTitles, headers } = getVariables();
     const title = ref({});
     const titles = reactive([]);
     const search = ref("");
@@ -100,15 +110,14 @@ export default {
     const isLoading = ref(false);
     const editIndex = ref(null);
 
-    axios.get(urlTitles).then((res) => {
+    axios.get(urlTitles, headers).then((res) => {
       titles.push(...res.data);
+      console.table(titles);
     });
 
     const filteredTitles = computed(() => {
       return titles.filter((data) => {
-        return data.title_name
-          ?.toLowerCase()
-          ?.includes(search.value.toLowerCase());
+        return data.title?.toLowerCase()?.includes(search.value.toLowerCase());
       });
     });
 
@@ -130,11 +139,11 @@ export default {
     const addTitle = () => {
       titleForm.value.validate((valid) => {
         if (valid) {
+          const data = { title: titleName.value };
           isLoading.value = true;
+
           axios
-            .post(urlTitles, {
-              title_name: titleName.value,
-            })
+            .post(urlTitles, data, headers)
             .then((res) => {
               ElMessage({
                 message: "Jabatan berhasil ditambah",
@@ -160,22 +169,21 @@ export default {
     const editTitleName = ref("");
     const saveChangeVisible = ref(false);
 
-    const editMode = (scope) => {
+    const editMode = (id, scope) => {
       editIndex.value = scope.$index;
       saveChangeVisible.value = true;
 
-      axios.get(`${urlTitles}${scope.row.id}/`).then((res) => {
-        title.value = res.data;
-        editTitleName.value = title.value.title_name;
+      axios.get(`${urlTitles}${id}/`, headers).then((res) => {
+        editTitleName.value = res.data.title;
       });
     };
 
     const saveChange = (id) => {
+      const data = { title: editTitleName.value };
       isLoading.value = true;
+
       axios
-        .patch(`${urlTitles}${id}/`, {
-          title_name: editTitleName.value,
-        })
+        .patch(`${urlTitles}${id}/`, data, headers)
         .then((res) => {
           ElMessage({
             message: "Perubahan berhasil disimpan",
@@ -198,7 +206,7 @@ export default {
       isLoading.value = true;
 
       axios
-        .delete(`${urlTitles}${id}/`)
+        .delete(`${urlTitles}${id}/`, headers)
         .then((res) => {
           ElMessage({
             message: "Item berhasil dihapus",
@@ -237,17 +245,4 @@ export default {
 };
 </script>
 
-<style lang="scss">
-.el-table {
-  --el-table-header-font-color: white;
-  --el-table-header-background-color: var(--el-color-primary);
-}
-
-.el-dialog {
-  --el-dialog-padding-primary: 15px;
-}
-
-.el-input.inline__edit {
-  --el-input-background-color: transparent;
-}
-</style>
+<style lang="scss"></style>

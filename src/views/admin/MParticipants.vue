@@ -9,7 +9,7 @@
     <el-table-column type="index" label="No" />
     <el-table-column prop="full_name" label="Nama" sortable />
     <el-table-column prop="company" label="Perusahaan" sortable />
-    <el-table-column prop="job_title" label="Jabatan" sortable />
+    <el-table-column prop="title" label="Jabatan" sortable />
     <el-table-column align="right">
       <template #header>
         <el-input
@@ -77,8 +77,8 @@
           <el-option
             v-for="comp in companies"
             :key="comp.id"
-            :label="comp.company_name"
-            :value="comp.company_name"
+            :label="comp.company"
+            :value="comp.company"
           />
         </el-select>
       </el-form-item>
@@ -93,8 +93,8 @@
           <el-option
             v-for="title in jobTitles"
             :key="title.id"
-            :label="title.title_name"
-            :value="title.title_name"
+            :label="title.title"
+            :value="title.title"
           />
         </el-select>
       </el-form-item>
@@ -141,8 +141,8 @@
           <el-option
             v-for="comp in companies"
             :key="comp.id"
-            :label="comp.company_name"
-            :value="comp.company_name"
+            :label="comp.company"
+            :value="comp.company"
           />
         </el-select>
       </el-form-item>
@@ -157,8 +157,8 @@
           <el-option
             v-for="title in jobTitles"
             :key="title.id"
-            :label="title.title_name"
-            :value="title.title_name"
+            :label="title.title"
+            :value="title.title"
           />
         </el-select>
       </el-form-item>
@@ -180,12 +180,13 @@ import getVariables from "../../composeables/getVariables";
 
 export default {
   setup() {
-    const { urlParticipants, urlCompanies, urlTitles } = getVariables();
+    const { urlParticipants, urlCompanies, urlTitles, headers } =
+      getVariables();
     const participants = reactive([]);
     const isLoading = ref(false);
 
     axios
-      .get(urlParticipants)
+      .get(urlParticipants, headers)
       .then((res) => {
         participants.push(...res.data);
         participants.map((data) => {
@@ -254,7 +255,7 @@ export default {
 
     const companies = reactive([]);
     axios
-      .get(urlCompanies)
+      .get(urlCompanies, headers)
       .then((res) => {
         companies.push(...res.data);
       })
@@ -267,7 +268,7 @@ export default {
 
     const jobTitles = reactive([]);
     axios
-      .get(urlTitles)
+      .get(urlTitles, headers)
       .then((res) => {
         jobTitles.push(...res.data);
       })
@@ -281,16 +282,17 @@ export default {
     const submitAdd = () => {
       addForm.value.validate((valid) => {
         if (valid) {
+          const data = {
+            first_name: firstName.value,
+            last_name: lastName.value,
+            email: email.value,
+            company: company.value,
+            title: jobTitle.value,
+          };
           isLoading.value = true;
 
           axios
-            .post(urlParticipants, {
-              first_name: firstName.value,
-              last_name: lastName.value,
-              email: email.value,
-              company: company.value,
-              job_title: jobTitle.value,
-            })
+            .post(urlParticipants, data, headers)
             .then((res) => {
               ElMessage({
                 message: "Peserta berhasil ditambah.",
@@ -319,13 +321,14 @@ export default {
       participantId.value = id;
       editDialogVisible.value = !editDialogVisible.value;
       axios
-        .get(`${urlParticipants}${id}/`)
+        .get(`${urlParticipants}${id}/`, headers)
         .then((res) => {
+          console.log(res);
           firstName.value = res.data.first_name;
           lastName.value = res.data.last_name;
           email.value = res.data.email;
           company.value = res.data.company;
-          jobTitle.value = res.data.job_title;
+          jobTitle.value = res.data.title;
         })
         .catch((err) => {
           ElMessage({
@@ -338,16 +341,17 @@ export default {
     const submitEdit = () => {
       addForm.value.validate((valid) => {
         if (valid) {
+          const data = {
+            first_name: firstName.value,
+            last_name: lastName.value,
+            email: email.value,
+            company: company.value,
+            title: jobTitle.value,
+          };
           isLoading.value = true;
 
           axios
-            .patch(`${urlParticipants}${participantId.value}/`, {
-              first_name: firstName.value,
-              last_name: lastName.value,
-              email: email.value,
-              company: company.value,
-              job_title: jobTitle.value,
-            })
+            .patch(`${urlParticipants}${participantId.value}/`, data, headers)
             .then((res) => {
               ElMessage({
                 message: "Perubahan berhasil disimpan",
@@ -378,7 +382,7 @@ export default {
       isLoading.value = true;
 
       axios
-        .delete(`${urlParticipants}${id}/`)
+        .delete(`${urlParticipants}${id}/`, headers)
         .then((res) => {
           ElMessage({
             message: "Peserta berhasil dihapus",
@@ -425,7 +429,32 @@ export default {
 
 <style lang="scss">
 .el-table {
-  --el-table-header-background-color: var(--el-color-primary);
   --el-table-header-font-color: white;
+  --el-table-header-background-color: var(--el-color-primary);
+
+  .ascending {
+    .sort-caret {
+      &.ascending {
+        border-bottom-color: white !important;
+      }
+    }
+  }
+  .descending {
+    .sort-caret {
+      &.descending {
+        border-top-color: white !important;
+      }
+    }
+  }
+
+  .el-input {
+    &.inline__edit {
+      --el-input-background-color: transparent;
+    }
+  }
+}
+
+.el-dialog {
+  --el-dialog-padding-primary: 15px;
 }
 </style>

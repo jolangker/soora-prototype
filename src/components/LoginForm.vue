@@ -10,8 +10,8 @@
       status-icon
       class="w-full"
     >
-      <el-form-item prop="username">
-        <el-input v-model="username" placeholder="Username" />
+      <el-form-item prop="email">
+        <el-input v-model="email" placeholder="Email" />
       </el-form-item>
       <el-form-item prop="password">
         <el-input v-model="password" show-password placeholder="Password" />
@@ -31,18 +31,25 @@
 <script>
 import { reactive, ref, toRefs } from "vue-demi";
 import { useRouter } from "vue-router";
+import axios from "axios";
+import { ElMessage } from "element-plus";
 export default {
   setup() {
     const loginFormModel = reactive({
-      username: "",
+      email: "",
       password: "",
     });
 
     const rules = {
-      username: [
+      email: [
         {
           required: true,
-          message: "Username tidak boleh kosong!",
+          message: "Email tidak boleh kosong!",
+          trigger: "blur",
+        },
+        {
+          type: "email",
+          message: "Harap masukkan email yang valid!",
           trigger: "blur",
         },
       ],
@@ -55,7 +62,7 @@ export default {
       ],
     };
 
-    const { username, password } = toRefs(loginFormModel);
+    const { email, password } = toRefs(loginFormModel);
     const loginForm = ref(null);
     const isLoading = ref(false);
     const router = useRouter();
@@ -64,10 +71,26 @@ export default {
       loginForm.value.validate((valid) => {
         if (valid) {
           isLoading.value = true;
-          setTimeout(() => {
-            isLoading.value = false;
-            router.push({ name: "Home" });
-          }, 3000);
+
+          axios
+            .post("https://soora-shollu.herokuapp.com/api/auth/login/", {
+              email: email.value,
+              password: password.value,
+            })
+            .then((res) => {
+              sessionStorage.setItem("userSession", JSON.stringify(res.data));
+              router.push({ name: "Home" });
+            })
+            .catch((err) => {
+              ElMessage({
+                message:
+                  "Login gagal. Harap periksa kembail email/password anda",
+                type: "error",
+              });
+            })
+            .then(() => {
+              isLoading.value = false;
+            });
         } else {
           return false;
         }
@@ -77,7 +100,7 @@ export default {
     return {
       loginFormModel,
       loginForm,
-      username,
+      email,
       password,
       rules,
       login,
