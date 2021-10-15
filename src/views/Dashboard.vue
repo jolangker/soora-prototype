@@ -15,11 +15,12 @@ import axios from "axios";
 import { reactive, ref } from "vue-demi";
 import moment from "moment";
 import getVariables from "../composeables/getVariables";
+import { ElMessage } from "element-plus";
 
 export default {
   components: { Cards, Datatable },
   setup() {
-    const { urlReports, urlParticipants } = getVariables();
+    const { urlReports, urlParticipants, headers } = getVariables();
     const reports = reactive([]);
     const totalParticipants = ref(0);
     const totalDurations = ref(0);
@@ -38,8 +39,8 @@ export default {
       }
     });
 
-    axios.get(urlParticipants).then((res) => {
-      totalParticipants.value = res.data.length;
+    axios.get(urlParticipants, headers).then((res) => {
+      totalParticipants.value = res.data?.length;
     });
 
     return {

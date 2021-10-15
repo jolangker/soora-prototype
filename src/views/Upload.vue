@@ -71,7 +71,8 @@ import getVariables from "../composeables/getVariables";
 
 export default {
   setup() {
-    const { urlParticipants, urlReports, urlTransript } = getVariables();
+    const { urlParticipants, urlReports, urlTransript, headers } =
+      getVariables();
     const meetingForm = ref(null);
     const meetingFormModel = reactive({
       title: "",
@@ -122,7 +123,7 @@ export default {
     const isLoading = ref(false);
     const router = useRouter();
 
-    axios.get(urlParticipants).then((res) => {
+    axios.get(urlParticipants, headers).then((res) => {
       participantsList.push(...res.data);
       participantsList.map((data) => {
         data.full_name = `${data.first_name} ${data.last_name}`;
