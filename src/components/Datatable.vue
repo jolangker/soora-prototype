@@ -71,18 +71,3 @@ export default {
   },
 };
 </script>
-
-<style>
-.custom-header {
-  --el-table-header-background-color: var(--el-color-primary);
-  color: white !important;
-}
-
-.el-table .descending .sort-caret.descending {
-  border-top-color: white !important;
-}
-
-.el-table .ascending .sort-caret.ascending {
-  border-bottom-color: white !important;
-}
-</style>

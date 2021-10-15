@@ -1,8 +1,11 @@
 <template>
   <div class="flex flex-col items-center py-5 border-b">
-    <el-avatar icon="el-icon-user-solid" :size="100" />
+    <el-avatar
+      :src="`https://ui-avatars.com/api/?name=${fullName}&background=random&rounded=true`"
+      :size="100"
+    />
     <div class="mt-2 text-white">
-      <p>Paqutio Tzy</p>
+      <p>{{ fullName }}</p>
     </div>
   </div>
   <el-menu class="el-menu-vertical" :router="true">
@@ -34,28 +37,21 @@
 
 <script>
 import { CaretBottom } from "@element-plus/icons";
-import { ref } from "vue-demi";
-import { useRouter } from "vue-router";
+import getVariables from "../composeables/getVariables";
 
 export default {
   components: { CaretBottom },
+  setup() {
+    const { userSession } = getVariables();
+    const firstName = userSession?.user?.first_name;
+    const lastName = userSession?.user?.last_name;
+    const fullName = `${firstName} ${lastName}`;
+
+    return {
+      fullName,
+    };
+  },
 };
 </script>
 
-<style lang="scss">
-.el-menu {
-  --el-menu-active-color: rgba(250, 250, 250, 1);
-  --el-menu-text-color: rgba(250, 250, 250, 0.7);
-  --el-menu-background-color: var(--el-color-primary);
-  --el-menu-hover-background-color: #0000a3;
-  --el-menu-border-color: none;
-
-  &:hover {
-    color: white;
-  }
-
-  .el-menu--inline {
-    --el-menu-background-color: #000085;
-  }
-}
-</style>
+<style lang="scss"></style>

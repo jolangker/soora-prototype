@@ -428,32 +428,6 @@ export default {
 </script>
 
 <style lang="scss">
-.el-table {
-  --el-table-header-font-color: white;
-  --el-table-header-background-color: var(--el-color-primary);
-
-  .ascending {
-    .sort-caret {
-      &.ascending {
-        border-bottom-color: white !important;
-      }
-    }
-  }
-  .descending {
-    .sort-caret {
-      &.descending {
-        border-top-color: white !important;
-      }
-    }
-  }
-
-  .el-input {
-    &.inline__edit {
-      --el-input-background-color: transparent;
-    }
-  }
-}
-
 .el-dialog {
   --el-dialog-padding-primary: 15px;
 }

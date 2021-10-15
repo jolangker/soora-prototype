@@ -5,23 +5,11 @@
     </router-link>
     <div role="button" class="relative" @click="toggleMenu">
       <div class="flex items-center">
-        <div
-          class="
-            w-10
-            h-10
-            border-2 border-white
-            rounded-full
-            relative
-            overflow-hidden
-          "
-        >
-          <img
-            src="../assets/user.png"
-            alt="user picture"
-            class="absolute inset-0"
-          />
-        </div>
-        <h3 class="ml-2">Paquito Tzy</h3>
+        <el-avatar
+          :src="`https://ui-avatars.com/api/?name=${fullName}&background=random&rounded=true`"
+          :size="30"
+        />
+        <p class="ml-2">{{ fullName }}</p>
       </div>
       <el-collapse-transition>
         <div
@@ -43,11 +31,18 @@
 <script>
 import { ref } from "vue-demi";
 import { useRouter } from "vue-router";
+import getVariables from "../composeables/getVariables";
+import axios from "axios";
 
 export default {
   setup() {
+    const { userSession } = getVariables();
     const router = useRouter();
     const show = ref(false);
+
+    const firstName = userSession?.user?.first_name;
+    const lastName = userSession?.user?.last_name;
+    const fullName = `${firstName} ${lastName}`;
 
     const toggleMenu = () => {
       show.value = !show.value;
@@ -66,6 +61,7 @@ export default {
       toggleMenu,
       logout,
       toAdmin,
+      fullName,
     };
   },
 };
