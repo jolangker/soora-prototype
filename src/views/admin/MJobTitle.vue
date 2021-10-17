@@ -45,7 +45,7 @@
             icon="el-icon-info"
             icon-color="red"
             title="Apakah anda yakin ingin menghapus jabatan ini?"
-            @confirm="deleteData(scope.row.id)"
+            @confirm="deleteData(scope.$index, scope.row.id)"
           >
             <template #reference>
               <el-button type="danger" plain size="mini">Hapus</el-button>
@@ -60,7 +60,7 @@
             type="success"
             size="mini"
             :loading="isLoading"
-            @click="saveChange(scope.row.id)"
+            @click="saveChange(scope.$index, scope.row.id)"
           >
             Simpan
           </el-button>
@@ -112,7 +112,6 @@ export default {
 
     axios.get(urlTitles, headers).then((res) => {
       titles.push(...res.data);
-      console.table(titles);
     });
 
     const filteredTitles = computed(() => {
@@ -170,15 +169,18 @@ export default {
     const saveChangeVisible = ref(false);
 
     const editMode = (id, scope) => {
-      editIndex.value = scope.$index;
-      saveChangeVisible.value = true;
-
-      axios.get(`${urlTitles}${id}/`, headers).then((res) => {
-        editTitleName.value = res.data.title;
-      });
+      axios
+        .get(`${urlTitles}${id}/`, headers)
+        .then((res) => {
+          editTitleName.value = res.data.title;
+        })
+        .then(() => {
+          editIndex.value = scope.$index;
+          saveChangeVisible.value = true;
+        });
     };
 
-    const saveChange = (id) => {
+    const saveChange = (index, id) => {
       const data = { title: editTitleName.value };
       isLoading.value = true;
 
@@ -190,6 +192,7 @@ export default {
             type: "success",
           });
           editIndex.value = null;
+          titles[index].title = editTitleName.value;
         })
         .catch((err) => {
           ElMessage({
@@ -202,7 +205,7 @@ export default {
         });
     };
 
-    const deleteData = (id) => {
+    const deleteData = (index, id) => {
       isLoading.value = true;
 
       axios
@@ -213,6 +216,7 @@ export default {
             type: "success",
           });
           editIndex.value = null;
+          titles.splice(index, 1);
         })
         .catch((err) => {
           ElMessage({

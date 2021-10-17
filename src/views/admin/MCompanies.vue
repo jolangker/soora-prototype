@@ -45,7 +45,7 @@
             icon="el-icon-info"
             icon-color="red"
             title="Apakah anda yakin ingin menghapus perusahaan ini?"
-            @confirm="deleteData(scope.row.id)"
+            @confirm="deleteData(scope.$index, scope.row.id)"
           >
             <template #reference>
               <el-button type="danger" plain size="mini">Hapus</el-button>
@@ -60,7 +60,7 @@
             type="success"
             size="mini"
             :loading="isLoading"
-            @click="saveChange(scope.row.id)"
+            @click="saveChange(scope.$index, scope.row.id)"
           >
             Simpan
           </el-button>
@@ -170,15 +170,18 @@ export default {
     const saveChangeVisible = ref(false);
 
     const editMode = (id, scope) => {
-      editIndex.value = scope.$index;
-      saveChangeVisible.value = true;
-
-      axios.get(`${urlCompanies}${id}/`, headers).then((res) => {
-        editCompanyName.value = res.data.company;
-      });
+      axios
+        .get(`${urlCompanies}${id}/`, headers)
+        .then((res) => {
+          editCompanyName.value = res.data.company;
+        })
+        .then(() => {
+          editIndex.value = scope.$index;
+          saveChangeVisible.value = true;
+        });
     };
 
-    const saveChange = (id) => {
+    const saveChange = (index, id) => {
       const data = { company: editCompanyName.value };
       isLoading.value = true;
 
@@ -190,6 +193,7 @@ export default {
             type: "success",
           });
           editIndex.value = null;
+          companies[index].company = editCompanyName.value;
         })
         .catch((err) => {
           ElMessage({
@@ -202,7 +206,7 @@ export default {
         });
     };
 
-    const deleteData = (id) => {
+    const deleteData = (index, id) => {
       isLoading.value = true;
 
       axios
@@ -213,6 +217,7 @@ export default {
             type: "success",
           });
           editIndex.value = null;
+          companies.splice(index, 1);
         })
         .catch((err) => {
           ElMessage({

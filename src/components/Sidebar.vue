@@ -8,19 +8,23 @@
       <p>{{ fullName }}</p>
     </div>
   </div>
-  <el-menu class="el-menu-vertical" :router="true">
+  <el-menu
+    class="el-menu-vertical"
+    :router="true"
+    :default-active="activeRoute"
+  >
     <el-sub-menu index="1">
       <template #title>
         <i class="el-icon-document"></i>
         <span>Data Master</span>
       </template>
-      <el-menu-item index="1-1" :route="{ name: 'MParticipants' }">
+      <el-menu-item index="MParticipants" :route="{ name: 'MParticipants' }">
         Master Peserta
       </el-menu-item>
-      <el-menu-item index="1-2" :route="{ name: 'MCompanies' }">
+      <el-menu-item index="MCompanies" :route="{ name: 'MCompanies' }">
         Master Perusahaan
       </el-menu-item>
-      <el-menu-item index="1-3" :route="{ name: 'MJobTitle' }">
+      <el-menu-item index="MJobTitle" :route="{ name: 'MJobTitle' }">
         Master Jabatan
       </el-menu-item>
     </el-sub-menu>
@@ -38,6 +42,8 @@
 <script>
 import { CaretBottom } from "@element-plus/icons";
 import getVariables from "../composeables/getVariables";
+import { onMounted, ref, watch } from "vue-demi";
+import { useRoute, useRouter } from "vue-router";
 
 export default {
   components: { CaretBottom },
@@ -47,8 +53,22 @@ export default {
     const lastName = userSession?.user?.last_name;
     const fullName = `${firstName} ${lastName}`;
 
+    const activeRoute = ref(null);
+    const route = useRoute();
+
+    onMounted(() => {
+      activeRoute.value = route.name;
+      console.log(activeRoute.value);
+    });
+
+    watch(route, (to, from) => {
+      activeRoute.value = to.name;
+      console.log(activeRoute.value);
+    });
+
     return {
       fullName,
+      activeRoute,
     };
   },
 };

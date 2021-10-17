@@ -317,13 +317,13 @@ export default {
 
     const participantId = ref(null);
     const editDialogVisible = ref(false);
+
     const toggleEdit = (id) => {
       participantId.value = id;
       editDialogVisible.value = !editDialogVisible.value;
       axios
         .get(`${urlParticipants}${id}/`, headers)
         .then((res) => {
-          console.log(res);
           firstName.value = res.data.first_name;
           lastName.value = res.data.last_name;
           email.value = res.data.email;
