@@ -4,7 +4,6 @@
       :data="filteredReports"
       class="w-full"
       :default-sort="{ prop: 'meetingDate', order: 'descending' }"
-      header-cell-class-name="custom-header"
     >
       <el-table-column
         prop="title"
@@ -71,3 +70,9 @@ export default {
   },
 };
 </script>
+
+<style lang="scss">
+.el-table {
+  box-shadow: 4px 4px 8px 0 rgba($color: #000000, $alpha: 0.1);
+}
+</style>

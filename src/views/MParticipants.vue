@@ -176,7 +176,7 @@
 import { computed, reactive, ref, toRefs } from "vue-demi";
 import axios from "axios";
 import { ElMessage } from "element-plus";
-import getVariables from "../../composeables/getVariables";
+import getVariables from "../composeables/getVariables";
 
 export default {
   setup() {

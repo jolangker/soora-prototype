@@ -3,8 +3,14 @@
     class="el-menu-vertical"
     :router="true"
     :default-active="activeRoute"
+    @select="handleSelect"
+    :collapse="true"
   >
-    <el-sub-menu index="1">
+    <el-menu-item index="Dashboard" :route="{ name: 'Dashboard' }">
+      <i class="el-icon-menu"></i>
+      <span>Dashboard</span>
+    </el-menu-item>
+    <el-sub-menu index="master">
       <template #title>
         <i class="el-icon-document"></i>
         <span>Data Master</span>
@@ -15,7 +21,7 @@
       <el-menu-item index="MCompanies" :route="{ name: 'MCompanies' }">
         Master Perusahaan
       </el-menu-item>
-      <el-menu-item index="MJobTitle" :route="{ name: 'MJobTitle' }">
+      <el-menu-item index="MJobTitles" :route="{ name: 'MJobTitles' }">
         Master Jabatan
       </el-menu-item>
     </el-sub-menu>
@@ -24,7 +30,7 @@
 
 <script>
 import getVariables from "../composeables/getVariables";
-import { onMounted, ref, watch } from "vue-demi";
+import { onMounted, ref } from "vue-demi";
 import { useRoute } from "vue-router";
 
 export default {
@@ -39,15 +45,17 @@ export default {
 
     onMounted(() => {
       activeRoute.value = route.name;
+      console.log(activeRoute.value);
     });
 
-    watch(route, (to, from) => {
-      activeRoute.value = to.name;
-    });
+    const handleSelect = (index, indexPath, item, routeResult) => {
+      activeRoute.value = index;
+    };
 
     return {
       fullName,
       activeRoute,
+      handleSelect,
     };
   },
 };
