@@ -1,13 +1,4 @@
 <template>
-  <div class="flex flex-col items-center py-5 border-b">
-    <el-avatar
-      :src="`https://ui-avatars.com/api/?name=${fullName}&background=random&rounded=true`"
-      :size="100"
-    />
-    <div class="mt-2 text-white">
-      <p>{{ fullName }}</p>
-    </div>
-  </div>
   <el-menu
     class="el-menu-vertical"
     :router="true"
@@ -29,24 +20,14 @@
       </el-menu-item>
     </el-sub-menu>
   </el-menu>
-  <div class="mt-auto w-full flex">
-    <router-link :to="{ name: 'Login' }" class="flex-grow">
-      <el-button type="primary" class="w-full">Logout</el-button>
-    </router-link>
-    <router-link :to="{ name: 'Dashboard' }" class="flex-grow">
-      <el-button type="primary" class="w-full">Dashboard</el-button>
-    </router-link>
-  </div>
 </template>
 
 <script>
-import { CaretBottom } from "@element-plus/icons";
 import getVariables from "../composeables/getVariables";
 import { onMounted, ref, watch } from "vue-demi";
-import { useRoute, useRouter } from "vue-router";
+import { useRoute } from "vue-router";
 
 export default {
-  components: { CaretBottom },
   setup() {
     const { userSession } = getVariables();
     const firstName = userSession?.user?.first_name;
@@ -58,12 +39,10 @@ export default {
 
     onMounted(() => {
       activeRoute.value = route.name;
-      console.log(activeRoute.value);
     });
 
     watch(route, (to, from) => {
       activeRoute.value = to.name;
-      console.log(activeRoute.value);
     });
 
     return {
@@ -74,4 +53,10 @@ export default {
 };
 </script>
 
-<style lang="scss"></style>
+<style lang="scss">
+.el-menu {
+  --el-menu-text-color: black;
+  --el-menu-background-color: white;
+  --el-menu-border-color: none;
+}
+</style>
