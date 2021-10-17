@@ -123,13 +123,13 @@ export default {
   },
   components: { Edit, CircleCloseFilled, CircleCheckFilled },
   setup(props) {
-    const { urlParticipants, urlReports } = getVariables();
+    const { urlParticipants, urlReports, headers } = getVariables();
     const { id, title, dateCreated, meetingDate, participants } = toRefs(
       props.meetingDetails
     );
     const participantsList = reactive([]);
 
-    axios.get(urlParticipants).then((res) => {
+    axios.get(urlParticipants, headers).then((res) => {
       participantsList.push(...res.data);
       participantsList.map((data) => {
         data.full_name = `${data.first_name} ${data.last_name}`;

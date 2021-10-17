@@ -7,6 +7,7 @@ $--font-path: "~element-plus/lib/theme-chalk/fonts";
   --el-table-header-font-color: white;
   --el-table-header-background-color: var(--el-color-primary);
   --el-table-tr-background-color: white;
+  box-shadow: 4px 4px 8px 0 rgba($color: #000000, $alpha: 0.1);
 
   .ascending {
     .sort-caret {

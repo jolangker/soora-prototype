@@ -1,6 +1,5 @@
 <template>
-  <div class="flex justify-between items-center mb-3">
-    <h1 class="text-nickel text-3xl font-semibold">Daftar Peserta</h1>
+  <div class="mb-3">
     <el-button type="primary" size="small" @click="toggleAdd">
       TAMBAH PESERTA
     </el-button>
@@ -15,7 +14,7 @@
         <el-input
           v-model="search"
           size="mini"
-          placeholder="Cari nama"
+          placeholder="Cari Peserta"
           prefix-icon="el-icon-search"
         />
       </template>
@@ -24,7 +23,7 @@
           type="primary"
           plain
           size="mini"
-          @click="toggleEdit(scope.row.id)"
+          @click="toggleEdit(scope.row.id, scope.$index)"
           >Sunting</el-button
         >
         <el-popconfirm
@@ -33,7 +32,7 @@
           icon="el-icon-info"
           icon-color="red"
           title="Apakah anda yakin ingin menghapus peserta ini?"
-          @confirm="deleteData(scope.row.id)"
+          @confirm="deleteData(scope.row.id, scope.$index)"
         >
           <template #reference>
             <el-button type="danger" plain size="mini">Hapus</el-button>
@@ -50,7 +49,12 @@
     destroy-on-close
     @close="clearForm"
   >
-    <el-form ref="addForm" :model="addFormModel" :rules="rules" status-icon>
+    <el-form
+      ref="participantsForm"
+      :model="participantsFormModel"
+      :rules="rules"
+      status-icon
+    >
       <el-row :gutter="16">
         <el-col :span="12">
           <el-form-item prop="firstName">
@@ -109,12 +113,17 @@
 
   <el-dialog
     v-model="editDialogVisible"
-    title="Tambah Peserta"
+    title="Edit Peserta"
     width="40%"
     destroy-on-close
     @close="clearForm"
   >
-    <el-form ref="addForm" :model="addFormModel" :rules="rules" status-icon>
+    <el-form
+      ref="participantsForm"
+      :model="participantsFormModel"
+      :rules="rules"
+      status-icon
+    >
       <el-row :gutter="16">
         <el-col :span="12">
           <el-form-item prop="firstName">
@@ -184,6 +193,7 @@ export default {
       getVariables();
     const participants = reactive([]);
     const isLoading = ref(false);
+    const participantsIdx = ref(null);
 
     axios
       .get(urlParticipants, headers)
@@ -214,16 +224,17 @@ export default {
       addDialogVisible.value = !addDialogVisible.value;
     };
 
-    const addForm = ref(null);
-    const addFormModel = reactive({
+    const participantsForm = ref(null);
+    const participantsFormModel = reactive({
       firstName: "",
       lastName: "",
       email: "",
       company: "",
       jobTitle: "",
     });
-    const { firstName, lastName, email, company, jobTitle } =
-      toRefs(addFormModel);
+    const { firstName, lastName, email, company, jobTitle } = toRefs(
+      participantsFormModel
+    );
     const rules = {
       firstName: [
         {
@@ -254,33 +265,17 @@ export default {
     };
 
     const companies = reactive([]);
-    axios
-      .get(urlCompanies, headers)
-      .then((res) => {
-        companies.push(...res.data);
-      })
-      .catch((err) => {
-        ElMessage({
-          message: `Data gagal dimuat. ${err}`,
-          type: "error",
-        });
-      });
+    axios.get(urlCompanies, headers).then((res) => {
+      companies.push(...res.data);
+    });
 
     const jobTitles = reactive([]);
-    axios
-      .get(urlTitles, headers)
-      .then((res) => {
-        jobTitles.push(...res.data);
-      })
-      .catch((err) => {
-        ElMessage({
-          message: `Data gagal dimuat. ${err}`,
-          type: "error",
-        });
-      });
+    axios.get(urlTitles, headers).then((res) => {
+      jobTitles.push(...res.data);
+    });
 
     const submitAdd = () => {
-      addForm.value.validate((valid) => {
+      participantsForm.value.validate((valid) => {
         if (valid) {
           const data = {
             first_name: firstName.value,
@@ -318,7 +313,7 @@ export default {
     const participantId = ref(null);
     const editDialogVisible = ref(false);
 
-    const toggleEdit = (id) => {
+    const toggleEdit = (id, idx) => {
       participantId.value = id;
       editDialogVisible.value = !editDialogVisible.value;
       axios
@@ -336,10 +331,12 @@ export default {
             type: "error",
           });
         });
+
+      participantsIdx.value = idx;
     };
 
     const submitEdit = () => {
-      addForm.value.validate((valid) => {
+      participantsForm.value.validate((valid) => {
         if (valid) {
           const data = {
             first_name: firstName.value,
@@ -357,6 +354,11 @@ export default {
                 message: "Perubahan berhasil disimpan",
                 type: "success",
               });
+              participants[participantsIdx.value].first_name = firstName.value;
+              participants[participantsIdx.value].last_name = lastName.value;
+              participants[participantsIdx.value].email = email.value;
+              participants[participantsIdx.value].company = company.value;
+              participants[participantsIdx.value].title = jobTitle.value;
               editDialogVisible.value = false;
             })
             .catch((err) => {
@@ -373,12 +375,12 @@ export default {
     };
 
     const clearForm = () => {
-      addForm.value.resetFields();
+      participantsForm.value.resetFields();
       company.value = "";
       jobTitle.value = "";
     };
 
-    const deleteData = (id) => {
+    const deleteData = (id, idx) => {
       isLoading.value = true;
 
       axios
@@ -388,6 +390,7 @@ export default {
             message: "Peserta berhasil dihapus",
             type: "success",
           });
+          participants.splice(idx, 1);
         })
         .catch((err) => {
           ElMessage({
@@ -406,8 +409,8 @@ export default {
       filteredParticipants,
       addDialogVisible,
       toggleAdd,
-      addForm,
-      addFormModel,
+      participantsForm,
+      participantsFormModel,
       firstName,
       lastName,
       email,

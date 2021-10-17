@@ -1,5 +1,5 @@
 <template>
-  <el-container>
+  <el-container v-if="isLogin">
     <el-header>
       <Header />
     </el-header>
@@ -17,9 +17,33 @@
 <script>
 import Header from "../components/Header.vue";
 import Sidebar from "../components/Sidebar.vue";
+import { ElMessage } from "element-plus";
+import { useRouter } from "vue-router";
+import { ref } from "vue-demi";
 
 export default {
   components: { Header, Sidebar },
+  setup() {
+    const router = useRouter();
+    const isLogin = ref(false);
+    const loginValidation = () => {
+      if (!sessionStorage.length) {
+        ElMessage({
+          message: "Anda belum login. Harap login terlebih dahulu.",
+          type: "warning",
+        });
+        router.push({ name: "Login" });
+      } else {
+        isLogin.value = true;
+      }
+    };
+
+    window.onload = loginValidation();
+
+    return {
+      isLogin,
+    };
+  },
 };
 </script>
 

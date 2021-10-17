@@ -71,8 +71,4 @@ export default {
 };
 </script>
 
-<style lang="scss">
-.el-table {
-  box-shadow: 4px 4px 8px 0 rgba($color: #000000, $alpha: 0.1);
-}
-</style>
+<style lang="scss"></style>

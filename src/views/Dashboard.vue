@@ -39,9 +39,19 @@ export default {
       }
     });
 
-    axios.get(urlParticipants, headers).then((res) => {
-      totalParticipants.value = res.data?.length;
-    });
+    axios
+      .get(urlParticipants, headers)
+      .then((res) => {
+        totalParticipants.value = res.data?.length;
+      })
+      .catch((err) => {
+        if (err.response.status === 401) {
+          ElMessage({
+            message: "Sesi telah kadaluarsa. Harap login kembali.",
+            type: "error",
+          });
+        }
+      });
 
     return {
       reports,

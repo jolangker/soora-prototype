@@ -1,6 +1,5 @@
 <template>
-  <div class="flex justify-between items-center mb-3">
-    <h1 class="text-nickel text-3xl font-semibold">Daftar Perusahaan</h1>
+  <div class="mb-3">
     <el-button type="primary" size="small" @click="dialogVisible = true">
       TAMBAH PERUSAHAAN
     </el-button>
@@ -213,7 +212,7 @@ export default {
         .delete(`${urlCompanies}${id}/`, headers)
         .then((res) => {
           ElMessage({
-            message: "Item berhasil dihapus",
+            message: "Jabatan berhasil dihapus",
             type: "success",
           });
           editIndex.value = null;

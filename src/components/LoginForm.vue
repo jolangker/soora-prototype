@@ -82,11 +82,18 @@ export default {
               router.push({ name: "Home" });
             })
             .catch((err) => {
-              ElMessage({
-                message:
-                  "Login gagal. Harap periksa kembail email/password anda",
-                type: "error",
-              });
+              if (err.response.status === 400) {
+                ElMessage({
+                  message:
+                    "Login gagal. Harap periksa kembail email/password anda",
+                  type: "warning",
+                });
+              } else {
+                ElMessage({
+                  message: err,
+                  type: "error",
+                });
+              }
             })
             .then(() => {
               isLoading.value = false;

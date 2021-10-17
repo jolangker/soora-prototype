@@ -3,7 +3,6 @@
     class="el-menu-vertical"
     :router="true"
     :default-active="activeRoute"
-    @select="handleSelect"
     :collapse="true"
   >
     <el-menu-item index="Dashboard" :route="{ name: 'Dashboard' }">
@@ -30,7 +29,7 @@
 
 <script>
 import getVariables from "../composeables/getVariables";
-import { onMounted, ref } from "vue-demi";
+import { onMounted, ref, watch } from "vue-demi";
 import { useRoute } from "vue-router";
 
 export default {
@@ -45,17 +44,15 @@ export default {
 
     onMounted(() => {
       activeRoute.value = route.name;
-      console.log(activeRoute.value);
     });
 
-    const handleSelect = (index, indexPath, item, routeResult) => {
-      activeRoute.value = index;
-    };
+    watch(route, (from, to) => {
+      activeRoute.value = to.name;
+    });
 
     return {
       fullName,
       activeRoute,
-      handleSelect,
     };
   },
 };
