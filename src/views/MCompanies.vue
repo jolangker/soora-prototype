@@ -94,26 +94,40 @@
 </template>
 
 <script>
-import { computed, reactive, ref, toRefs } from "vue-demi";
+import { computed, onMounted, reactive, ref, toRefs } from "vue-demi";
 import axios from "axios";
 import { ElMessage } from "element-plus";
 import getVariables from "../composeables/getVariables";
+import Pusher from "pusher-js";
 
 export default {
   setup() {
     const { urlCompanies, headers } = getVariables();
-    const companies = reactive([]);
+    const companies = ref([]);
     const search = ref("");
     const dialogVisible = ref(false);
     const isLoading = ref(false);
     const editIndex = ref(null);
 
-    axios.get(urlCompanies, headers).then((res) => {
-      companies.push(...res.data);
+    onMounted(() => {
+      const pusher = new Pusher("881f5a1bf4d80a7ba60f", {
+        cluster: "ap1",
+      });
+
+      const channel = pusher.subscribe("soora-shollu");
+      channel.bind("company", fetchData);
     });
 
+    const fetchData = () => {
+      axios.get(urlCompanies, headers).then((res) => {
+        companies.value = res.data;
+      });
+    };
+
+    fetchData();
+
     const filteredCompanies = computed(() => {
-      return companies.filter((data) => {
+      return companies.value.filter((data) => {
         return data.company
           ?.toLowerCase()
           ?.includes(search.value.toLowerCase());
@@ -142,13 +156,18 @@ export default {
           isLoading.value = true;
 
           axios
-            .post(urlCompanies, data, headers)
+            .post(
+              "https://soora-shollu.herokuapp.com/api/rtcompanies/",
+              data,
+              headers
+            )
             .then((res) => {
               ElMessage({
                 message: "Perusahaan berhasil ditambah",
                 type: "success",
               });
               dialogVisible.value = false;
+              companyName.value = "";
             })
             .catch((err) => {
               ElMessage({
@@ -192,7 +211,7 @@ export default {
             type: "success",
           });
           editIndex.value = null;
-          companies[index].company = editCompanyName.value;
+          companies.value[index].company = editCompanyName.value;
         })
         .catch((err) => {
           ElMessage({
@@ -216,7 +235,7 @@ export default {
             type: "success",
           });
           editIndex.value = null;
-          companies.splice(index, 1);
+          companies.value.splice(index, 1);
         })
         .catch((err) => {
           ElMessage({

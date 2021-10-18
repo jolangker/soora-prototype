@@ -182,37 +182,43 @@
 </template>
 
 <script>
-import { computed, reactive, ref, toRefs } from "vue-demi";
+import { computed, onMounted, reactive, ref, toRefs } from "vue-demi";
 import axios from "axios";
 import { ElMessage } from "element-plus";
 import getVariables from "../composeables/getVariables";
+import Pusher from "pusher-js";
 
 export default {
   setup() {
     const { urlParticipants, urlCompanies, urlTitles, headers } =
       getVariables();
-    const participants = reactive([]);
+    const participants = ref([]);
     const isLoading = ref(false);
     const participantsIdx = ref(null);
 
-    axios
-      .get(urlParticipants, headers)
-      .then((res) => {
-        participants.push(...res.data);
-        participants.map((data) => {
+    onMounted(() => {
+      const pusher = new Pusher("881f5a1bf4d80a7ba60f", {
+        cluster: "ap1",
+      });
+
+      const channel = pusher.subscribe("soora-shollu");
+      channel.bind("participant", fetchData);
+    });
+
+    const fetchData = () => {
+      axios.get(urlParticipants, headers).then((res) => {
+        participants.value = res.data;
+        participants.value.map((data) => {
           data.full_name = `${data.first_name} ${data.last_name}`;
         });
-      })
-      .catch((err) => {
-        ElMessage({
-          message: `Data gagal dimuat. ${err}`,
-          type: "error",
-        });
       });
+    };
+
+    fetchData();
 
     const search = ref("");
     const filteredParticipants = computed(() => {
-      return participants.filter((data) => {
+      return participants.value.filter((data) => {
         return data?.full_name
           .toLowerCase()
           .includes(search.value.toLowerCase());
@@ -287,7 +293,11 @@ export default {
           isLoading.value = true;
 
           axios
-            .post(urlParticipants, data, headers)
+            .post(
+              "https://soora-shollu.herokuapp.com/api/rtparticipants/",
+              data,
+              headers
+            )
             .then((res) => {
               ElMessage({
                 message: "Peserta berhasil ditambah.",
@@ -354,11 +364,13 @@ export default {
                 message: "Perubahan berhasil disimpan",
                 type: "success",
               });
-              participants[participantsIdx.value].first_name = firstName.value;
-              participants[participantsIdx.value].last_name = lastName.value;
-              participants[participantsIdx.value].email = email.value;
-              participants[participantsIdx.value].company = company.value;
-              participants[participantsIdx.value].title = jobTitle.value;
+              participants.value[participantsIdx.value].first_name =
+                firstName.value;
+              participants.value[participantsIdx.value].last_name =
+                lastName.value;
+              participants.value[participantsIdx.value].email = email.value;
+              participants.value[participantsIdx.value].company = company.value;
+              participants.value[participantsIdx.value].title = jobTitle.value;
               editDialogVisible.value = false;
             })
             .catch((err) => {
@@ -390,7 +402,7 @@ export default {
             message: "Peserta berhasil dihapus",
             type: "success",
           });
-          participants.splice(idx, 1);
+          participants.value.splice(idx, 1);
         })
         .catch((err) => {
           ElMessage({

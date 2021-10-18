@@ -94,27 +94,40 @@
 </template>
 
 <script>
-import { computed, reactive, ref, toRefs } from "vue-demi";
+import { computed, onMounted, reactive, ref, toRefs } from "vue-demi";
 import axios from "axios";
 import { ElMessage } from "element-plus";
 import getVariables from "../composeables/getVariables";
+import Pusher from "pusher-js";
 
 export default {
   setup() {
     const { urlTitles, headers } = getVariables();
-    const title = ref({});
-    const titles = reactive([]);
+    const titles = ref([]);
     const search = ref("");
     const dialogVisible = ref(false);
     const isLoading = ref(false);
     const editIndex = ref(null);
 
-    axios.get(urlTitles, headers).then((res) => {
-      titles.push(...res.data);
+    onMounted(() => {
+      const pusher = new Pusher("881f5a1bf4d80a7ba60f", {
+        cluster: "ap1",
+      });
+
+      const channel = pusher.subscribe("soora-shollu");
+      channel.bind("title", fetchData);
     });
 
+    const fetchData = () => {
+      axios.get(urlTitles, headers).then((res) => {
+        titles.value = res.data;
+      });
+    };
+
+    fetchData();
+
     const filteredTitles = computed(() => {
-      return titles.filter((data) => {
+      return titles.value.filter((data) => {
         return data.title?.toLowerCase()?.includes(search.value.toLowerCase());
       });
     });
@@ -141,13 +154,18 @@ export default {
           isLoading.value = true;
 
           axios
-            .post(urlTitles, data, headers)
+            .post(
+              "https://soora-shollu.herokuapp.com/api/rttitles/",
+              data,
+              headers
+            )
             .then((res) => {
               ElMessage({
                 message: "Jabatan berhasil ditambah",
                 type: "success",
               });
               dialogVisible.value = false;
+              titleName.value = "";
             })
             .catch((err) => {
               ElMessage({
@@ -191,7 +209,7 @@ export default {
             type: "success",
           });
           editIndex.value = null;
-          titles[index].title = editTitleName.value;
+          titles.value[index].title = editTitleName.value;
         })
         .catch((err) => {
           ElMessage({
@@ -215,7 +233,7 @@ export default {
             type: "success",
           });
           editIndex.value = null;
-          titles.splice(index, 1);
+          titles.value.splice(index, 1);
         })
         .catch((err) => {
           ElMessage({
