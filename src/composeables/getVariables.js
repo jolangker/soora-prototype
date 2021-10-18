@@ -5,11 +5,12 @@ const getVariables = () => {
   const urlTitles = "https://soora-shollu.herokuapp.com/api/titles/";
   const urlReports = "http://localhost:3000/reports/";
   const urlTransript = "http://localhost:3000/transcript/";
-  const userSession = JSON.parse(sessionStorage?.userSession);
-  const token = userSession?.token;
+  const token = JSON.parse(sessionStorage?.token);
+  const accessToken = token?.access;
+  const refreshToken = token?.refresh;
   const headers = {
     headers: {
-      Authorization: `JWT ${token}`,
+      Authorization: `JWT ${accessToken}`,
     },
   };
 
@@ -19,8 +20,9 @@ const getVariables = () => {
     urlTitles,
     urlReports,
     urlTransript,
-    userSession,
     token,
+    accessToken,
+    refreshToken,
     headers,
   };
 };

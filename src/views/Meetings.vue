@@ -51,19 +51,20 @@
     </el-tab-pane>
   </el-tabs>
 
-  <el-popconfirm
-    confirm-button-text="IYA"
-    cancel-button-text="BATALKAN"
-    icon="el-icon-info"
-    icon-color="red"
-    title="Apakah anda yakin ingin menghapus ini?"
-    class="mt-5"
-    @confirm="deleteReport"
-  >
-    <template #reference>
-      <el-button type="danger" size="mini">Hapus Laporan</el-button>
-    </template>
-  </el-popconfirm>
+  <div class="mt-5">
+    <el-popconfirm
+      confirm-button-text="IYA"
+      cancel-button-text="BATALKAN"
+      icon="el-icon-info"
+      icon-color="red"
+      title="Apakah anda yakin ingin menghapus ini?"
+      @confirm="deleteReport"
+    >
+      <template #reference>
+        <el-button type="danger" size="mini">Hapus Laporan</el-button>
+      </template>
+    </el-popconfirm>
+  </div>
 </template>
 
 <script>

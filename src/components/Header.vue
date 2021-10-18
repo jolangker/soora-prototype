@@ -6,10 +6,10 @@
     <div role="button" class="relative" @click="toggleMenu">
       <div class="flex items-center">
         <el-avatar
-          :src="`https://ui-avatars.com/api/?name=${fullName}&background=random&rounded=true`"
+          :src="`https://ui-avatars.com/api/?name=${user.full_name}&background=random&rounded=true`"
           :size="30"
         />
-        <p class="ml-2">{{ fullName }}</p>
+        <p class="ml-2">{{ user.full_name }}</p>
       </div>
       <el-collapse-transition>
         <div
@@ -43,13 +43,18 @@ import axios from "axios";
 
 export default {
   setup() {
-    const { userSession } = getVariables();
+    const { headers } = getVariables();
     const router = useRouter();
     const show = ref(false);
+    const user = ref({});
 
-    const firstName = userSession?.user?.first_name;
-    const lastName = userSession?.user?.last_name;
-    const fullName = `${firstName} ${lastName}`;
+    axios
+      .get("https://soora-shollu.herokuapp.com/api/auth/user/", headers)
+      .then((res) => {
+        user.value = res.data;
+        user.value.full_name = `${user.value.first_name} ${user.value.last_name}`;
+        console.log(user.value);
+      });
 
     const toggleMenu = () => {
       show.value = !show.value;
@@ -68,7 +73,7 @@ export default {
       toggleMenu,
       logout,
       toAdmin,
-      fullName,
+      user,
     };
   },
 };

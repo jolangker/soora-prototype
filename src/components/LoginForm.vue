@@ -78,7 +78,12 @@ export default {
               password: password.value,
             })
             .then((res) => {
-              sessionStorage.setItem("userSession", JSON.stringify(res.data));
+              const token = {
+                access: res.data.access_token,
+                refresh: res.data.refresh_token,
+              };
+              console.log(res);
+              sessionStorage.setItem("token", JSON.stringify(token));
               router.push({ name: "Home" });
             })
             .catch((err) => {
